@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Minhas Férias"
 include ':app'
+include ':domain'
