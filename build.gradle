@@ -4,8 +4,8 @@ buildscript {
     ext {
         javaCompileVersion = JavaVersion.VERSION_1_8
         jvmTarget = "1.8"
-        defaultCompileSdkVersion = 33
-        defaultTargetSdkVersion = 33
+        defaultCompileSdkVersion = 34
+        defaultTargetSdkVersion = 34
         defaultMinSdkVersion = 24
 
         versions = [
