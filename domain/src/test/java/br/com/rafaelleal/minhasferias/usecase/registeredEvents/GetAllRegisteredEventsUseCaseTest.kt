@@ -1,8 +1,8 @@
-package br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents
+package br.com.rafaelleal.minhasferias.usecase.registeredEvents
 
-import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
-import br.com.rafaelleal.minhasferias.domain.repositories.RegisteredEventsRepository
-import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.GetAllRegisteredEventsUseCase
+import br.com.rafaelleal.minhasferias.models.RegisteredEvent
+import br.com.rafaelleal.minhasferias.repositories.RegisteredEventsRepository
+import br.com.rafaelleal.minhasferias.usecase.registeredEvents.GetAllRegisteredEventsUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.single

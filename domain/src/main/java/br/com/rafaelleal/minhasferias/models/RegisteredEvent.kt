@@ -1,4 +1,4 @@
-package br.com.rafaelleal.minhasferias.domain.models
+package br.com.rafaelleal.minhasferias.models
 
 data class RegisteredEvent(
     val name: String,
