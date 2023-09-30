@@ -1,4 +1,4 @@
-package br.com.rafaelleal.domain.usecase
+package br.com.rafaelleal.minhasferias.domain.usecase
 
 import br.com.rafaelleal.minhasferias.domain.sealed.UseCaseException
 import br.com.rafaelleal.minhasferias.domain.sealed.Result
@@ -33,7 +33,6 @@ class UseCaseTest {
                 assertEquals(this@UseCaseTest.request, request)
                 return flowOf(response)
             }
-
         }
     }
 
@@ -54,7 +53,6 @@ class UseCaseTest {
                     throw UseCaseException.UserException(Throwable())
                 }
             }
-
         }
         runBlocking {
             val result = useCase.execute(request).first()
@@ -72,7 +70,6 @@ class UseCaseTest {
                     throw UseCaseException.AddressException(Throwable())
                 }
             }
-
         }
         runBlocking {
             val result = useCase.execute(request).first()
@@ -90,7 +87,6 @@ class UseCaseTest {
                     throw Throwable()
                 }
             }
-
         }
         runBlocking {
             val result = useCase.execute(request).first()

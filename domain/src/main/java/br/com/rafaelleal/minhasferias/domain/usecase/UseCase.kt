@@ -1,4 +1,4 @@
-package br.com.rafaelleal.domain.usecase
+package br.com.rafaelleal.minhasferias.domain.usecase
 
 import br.com.rafaelleal.minhasferias.domain.sealed.Result
 import br.com.rafaelleal.minhasferias.domain.sealed.UseCaseException
@@ -11,12 +11,9 @@ import kotlinx.coroutines.flow.map
 abstract class UseCase<I : UseCase.Request, O : UseCase.Response>(
     private val configuration: Configuration
 ) {
-    fun execute(request: I) = process(request)
-        .map {
+    fun execute(request: I) = process(request).map {
             Result.Success(it) as Result<O>
-        }
-        .flowOn(configuration.dispatcher)
-        .catch {
+        }.flowOn(configuration.dispatcher).catch {
             emit(
                 Result.Error(
                     UseCaseException.createFromThrowable(it)
