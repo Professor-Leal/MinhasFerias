@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace  'br.com.rafaelleal.minhasferias.domain'
+    namespace 'br.com.rafaelleal.minhasferias.data_local'
     compileSdk defaultCompileSdkVersion
 
     defaultConfig {
@@ -15,6 +15,12 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -34,12 +40,23 @@ android {
 
 dependencies {
 
+    implementation(project(path: ":domain"))
+    implementation(project(path: ":data-repository"))
+
+    implementation 'dev.krud:shapeshift:0.8.0'
+    implementation kotlinLibraries.kotlinReflect
+
     implementation coroutines.coroutinesAndroid
     implementation di.hiltAndroid
     kapt di.hiltCompiler
 
     implementation androidx.core
     implementation androidx.appCompat
+
+    implementation persistence.roomRuntime
+    implementation persistence.roomCommon
+    implementation persistence.roomKtx
+    kapt persistence.roomCompiler
 
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
     implementation androidx.lifecycleRuntimeKtx

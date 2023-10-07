@@ -15,3 +15,5 @@ dependencyResolutionManagement {
 rootProject.name = "Minhas Férias"
 include ':app'
 include ':domain'
+include ':data-repository'
+include ':data-local'

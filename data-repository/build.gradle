@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace  'br.com.rafaelleal.minhasferias.domain'
+    namespace 'br.com.rafaelleal.minhasferias.data_repository'
     compileSdk defaultCompileSdkVersion
 
     defaultConfig {
@@ -33,6 +33,8 @@ android {
 }
 
 dependencies {
+
+    implementation(project(path: ":domain"))
 
     implementation coroutines.coroutinesAndroid
     implementation di.hiltAndroid
