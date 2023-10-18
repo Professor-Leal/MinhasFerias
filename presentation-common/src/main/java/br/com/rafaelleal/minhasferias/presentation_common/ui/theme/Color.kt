@@ -31,3 +31,13 @@ val Blue20_50 = Color(0x90000066)
 val Blue90_90 = Color(0xE6CCCCFF)
 
 val Navy = Color(0xFF000080) // Blue 25%
+
+val Orange10 = Color(0xFF332100)
+val Orange20 = Color(0xFF664200)
+val Orange30 = Color(0xFF996300)
+val Orange40 = Color(0xFFCC8500)
+val Orange50 = Color(0xFFFFA500)
+val Orange60 = Color(0xFFFFB833)
+val Orange70 = Color(0xFFFFC966)
+val Orange80 = Color(0xFFFFDb99)
+val Orange90 = Color(0xFFFFEDCC)

@@ -1,7 +1,9 @@
 package br.com.rafaelleal.minhasferias.presentation_registered_events.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -20,19 +22,13 @@ import androidx.compose.ui.unit.sp
 import br.com.rafaelleal.minhasferias.presentation_common.screens.CommonScreen
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Black
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue10
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue20
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue20_60
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue20_70
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue20_80
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue20_90
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue30
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue50
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue80
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue90
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Navy
+import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Orange30
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.White
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventListItemModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventsListModel
+import java.util.Locale
 
 @Composable
 fun RegisteredEventsListScreen(
@@ -71,17 +67,24 @@ internal val items: List<RegisteredEventListItemModel> = listOf(
 fun RegisteredEventsList(
     registeredEventsListModel: RegisteredEventsListModel
 ) {
-    LazyColumn(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        item(registeredEventsListModel.headerText) {
-            RegisteredEventsListHeader(registeredEventsListModel.headerText)
-        }
-        items(
-            items
+    if (registeredEventsListModel.items.isEmpty()) {
+        AddEventsBanner()
+    } else {
+
+        LazyColumn(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            item(registeredEventsListModel.headerText) {
+
+                RegisteredEventsListHeader(registeredEventsListModel.headerText)
+            }
+
+            items(
+                items
 //            registeredEventsListModel.items
-        ) { item ->
-            RegisteredEventsListItem(item)
+            ) { item ->
+                RegisteredEventsListItem(item)
+            }
         }
     }
 }
@@ -143,5 +146,24 @@ fun RegisteredEventsListItem(
                 color = Blue10
             )
         }
+    }
+}
+
+@Composable
+fun AddEventsBanner() {
+    Box(
+        modifier = Modifier
+            .background(Orange30)
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = "Adicione eventos clicando em (+)".uppercase(Locale.ROOT),
+            fontSize = 36.sp,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            color = White
+        )
     }
 }
