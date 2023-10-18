@@ -1,6 +1,6 @@
-package br.com.rafaelleal.minhasferias.repositories
+package br.com.rafaelleal.minhasferias.domain.repositories
 
-import br.com.rafaelleal.minhasferias.models.RegisteredEvent
+import   br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
 import kotlinx.coroutines.flow.Flow
 
 interface RegisteredEventsRepository {

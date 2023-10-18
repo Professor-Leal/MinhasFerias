@@ -1,8 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -43,20 +43,23 @@ dependencies {
     implementation(project(path: ":domain"))
     implementation(project(path: ":data-repository"))
 
+
+    implementation coroutines.coroutinesAndroid
+    implementation persistence.roomRuntime
+    implementation persistence.roomKtx
+    kapt persistence.roomCompiler
+    implementation di.hiltAndroid
+    kapt di.hiltCompiler
+
+
     implementation 'dev.krud:shapeshift:0.8.0'
     implementation kotlinLibraries.kotlinReflect
 
-    implementation coroutines.coroutinesAndroid
-    implementation di.hiltAndroid
-    kapt di.hiltCompiler
 
     implementation androidx.core
     implementation androidx.appCompat
 
-    implementation persistence.roomRuntime
     implementation persistence.roomCommon
-    implementation persistence.roomKtx
-    kapt persistence.roomCompiler
 
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
     implementation androidx.lifecycleRuntimeKtx
@@ -64,4 +67,24 @@ dependencies {
     testImplementation test.junit
     testImplementation test.coroutines
     testImplementation test.mockito
+    testImplementation androidTest.truth
+    testImplementation androidTest.coreTesting
+    testImplementation androidTest.junit
+    testImplementation androidTest.roomTesting
+
+    androidTestImplementation test.junit
+    androidTestImplementation test.coroutines
+
+    // Testing-only dependencies
+    androidTestImplementation androidTest.core
+    androidTestImplementation androidTest.junit
+    androidTestImplementation androidTest.runner
+    androidTestImplementation androidTest.testMonitor
+    androidTestImplementation androidTest.espressoCore
+    androidTestImplementation androidTest.truth
+    androidTestImplementation androidTest.coreTesting
+
+    androidTestImplementation 'app.cash.turbine:turbine:0.9.0'
+
+
 }

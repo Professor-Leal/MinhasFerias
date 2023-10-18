@@ -1,8 +1,8 @@
 package br.com.rafaelleal.minhasferias.data_repository.repositories
 
 import br.com.rafaelleal.minhasferias.data_repository.data_source.local.RegisteredEventsLocalDataSource
-import br.com.rafaelleal.minhasferias.models.RegisteredEvent
-import br.com.rafaelleal.minhasferias.repositories.RegisteredEventsRepository
+import   br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
+import br.com.rafaelleal.minhasferias.domain.repositories.RegisteredEventsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

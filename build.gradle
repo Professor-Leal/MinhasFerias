@@ -12,6 +12,7 @@ buildscript {
         versions = [
 
                 kotlinReflect        : "1.9.10",
+                kotlinPlugin        : "1.8.10",
 
                 hilt                 : "2.48",
                 coreKtx              : "1.10.1",
@@ -22,7 +23,7 @@ buildscript {
                 material             : "1.8.0",
                 coroutines           : "1.5.2",
                 junit                : "4.13.2",
-                mockito              : "4.0.0",
+                mockito              : "5.1.0",
                 espressoJunit        : "1.1.3",
                 espressoCore         : "3.4.0",
                 constraintlayout     : "2.1.4",
@@ -39,22 +40,19 @@ buildscript {
                 hiltNavigationCompose: "1.0.0-rc01",
 
                 activity             : "1.6.0",
-                fragment             : "1.5.5"
+                fragment             : "1.5.5",
+
+                androidxTestCore     : "1.5.0",
+                testRunner           : "1.5.2",
+                testMonitor          : "1.6.1",
+                truth                : "1.1.3",
+                coreTesting          : "2.1.0",
+                roomTesting          : "2.5.2"
 
         ]
 
         kotlinLibraries = [
                 kotlinReflect: "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlinReflect}"
-        ]
-
-        androidx = [
-                core                   : "androidx.core:core-ktx:${versions.coreKtx}",
-                appCompat              : "androidx.appcompat:appcompat:${versions.appCompat}",
-                composeUi              : "androidx.compose.ui:ui:${versions.compose}",
-                composeMaterial        : "androidx.compose.material:material:${versions.compose}",
-                composeUiToolingPreview: "androidx.compose.ui:ui-tooling-preview:${versions.compose}",
-                lifecycleRuntimeKtx    : "androidx.lifecycle:lifecycle-runtime-ktx:${versions.lifecycleRuntimeKtx}",
-                composeActivity        : "androidx.activity:activity-compose:${versions.activityCompose}"
         ]
 
         androidx = [
@@ -95,7 +93,13 @@ buildscript {
         androidTest = [
                 junit             : "androidx.test.ext:junit:${versions.espressoJunit}",
                 espressoCore      : "androidx.test.espresso:espresso-core:${versions.espressoCore}",
-                composeUiTestJunit: "androidx.compose.ui:ui-test-junit4:${versions.compose}"
+                composeUiTestJunit: "androidx.compose.ui:ui-test-junit4:${versions.compose}",
+                core              : "androidx.test:core:${versions.androidxTestCore}",
+                runner            : "androidx.test:runner:${versions.testRunner}",
+                testMonitor       : "androidx.test:monitor:${versions.testMonitor}",
+                truth             : "com.google.truth:truth:${versions.truth}",
+                coreTesting       : "androidx.arch.core:core-testing:${versions.coreTesting}",
+                roomTesting       : "androidx.room:room-testing:${versions.roomTesting}"
         ]
 
         persistence = [
@@ -114,14 +118,17 @@ buildscript {
                 moshiKotlinCodegen: "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshiKotlinCodegen}"
         ]
         plugin_hilt_version = versions.hilt
+        plugin_kotlin_version = versions.kotlinPlugin
     }
 }
+
 
 plugins {
     id 'com.android.application' version '8.0.2' apply false
     id 'com.android.library' version '8.0.2' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.10' apply false
+    id 'org.jetbrains.kotlin.android' version "$plugin_kotlin_version" apply false
     id 'com.google.dagger.hilt.android' version "$plugin_hilt_version" apply false
+    id "org.jetbrains.kotlin.jvm" version "$plugin_kotlin_version"
     // Necessário para Moshi:
-    id 'org.jetbrains.kotlin.kapt' version '1.8.10' apply false
+    id 'org.jetbrains.kotlin.kapt' version "$plugin_kotlin_version" apply false
 }

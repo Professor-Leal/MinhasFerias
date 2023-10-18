@@ -1,9 +1,9 @@
-package br.com.rafaelleal.minhasferias.models
+package br.com.rafaelleal.minhasferias.domain.models
 
 data class RegisteredEvent(
-    val id: Long,
-    val name: String,
-    val address: String,
-    val time: String,
-    val day: String
+    var name: String,
+    var address: String,
+    var time: String,
+    var day: String,
+    var id: Long
 )

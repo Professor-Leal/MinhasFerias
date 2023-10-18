@@ -1,8 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
 }
 
 
@@ -63,19 +63,38 @@ android {
 
 dependencies {
 
-    // Possui dependência sobre os módulos:
+    // Possui dependência dos módulos:
+    implementation(project(path: ":data-local"))
+    implementation(project(path: ":data-repository"))
     implementation(project(path: ":domain"))
+    implementation(project(path: ":presentation-common"))
+    implementation(project(path: ":presentation-registered-events"))
+
+    implementation androidx.core
+    implementation androidx.appCompat
+    implementation material.material
+    implementation androidx.composeUi
+    implementation androidx.composeMaterial
+    implementation androidx.composeUiToolingPreview
+    implementation androidx.lifecycleRuntimeKtx
+    implementation androidx.composeActivity
+    implementation androidx.navigationCompose
+
+
+
+
+    implementation coroutines.coroutinesAndroid
+    implementation androidx.viewModelKtx
+    implementation androidx.viewModelCompose
+
 
     // Hilt
     implementation di.hiltAndroid
     kapt di.hiltCompiler
+    implementation androidx.hiltNavigationCompose
 
-
-    implementation androidx.core
 
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
-    implementation androidx.lifecycleRuntimeKtx
-    implementation androidx.composeActivity
 
     implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation 'androidx.compose.ui:ui'
@@ -83,7 +102,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
 
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation test.junit
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')

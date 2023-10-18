@@ -1,7 +1,7 @@
-package br.com.rafaelleal.minhasferias.usecase
+package br.com.rafaelleal.minhasferias.domain.usecase
 
-import br.com.rafaelleal.minhasferias.sealed.Result
-import br.com.rafaelleal.minhasferias.sealed.UseCaseException
+import   br.com.rafaelleal.minhasferias.domain.sealed.Result
+import   br.com.rafaelleal.minhasferias.domain.sealed.UseCaseException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

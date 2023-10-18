@@ -1,4 +1,4 @@
-package br.com.rafaelleal.minhasferias.sealed
+package br.com.rafaelleal.minhasferias.domain.sealed
 
 
 sealed class Result<out T : Any> {
