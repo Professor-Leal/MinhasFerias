@@ -65,4 +65,8 @@ dependencies {
     testImplementation test.junit
     testImplementation test.coroutines
     testImplementation test.mockito
+
+    // Compose tests:
+    androidTestImplementation androidTest.composeUiTestJunit
+    debugImplementation debug.uiTestManifest
 }

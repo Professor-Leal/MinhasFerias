@@ -80,8 +80,8 @@ fun RegisteredEventsList(
             }
 
             items(
-                items
-//            registeredEventsListModel.items
+//                items
+            registeredEventsListModel.items
             ) { item ->
                 RegisteredEventsListItem(item)
             }

@@ -12,6 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
+val Navy = Color(0xFF000080) // Blue 25%
 
 val Blue10 = Color(0xFF000033)
 val Blue20 = Color(0xFF000066)
@@ -23,15 +24,6 @@ val Blue70 = Color(0xFF6666FF)
 val Blue80 = Color(0xFF9999FF)
 val Blue90 = Color(0xFFCCCCFF)
 
-val Blue20_90 = Color(0xE6000066)
-val Blue20_80 = Color(0xCD000066)
-val Blue20_70 = Color(0xB3000066)
-val Blue20_60 = Color(0x99000066)
-val Blue20_50 = Color(0x90000066)
-val Blue90_90 = Color(0xE6CCCCFF)
-
-val Navy = Color(0xFF000080) // Blue 25%
-
 val Orange10 = Color(0xFF332100)
 val Orange20 = Color(0xFF664200)
 val Orange30 = Color(0xFF996300)
@@ -41,3 +33,12 @@ val Orange60 = Color(0xFFFFB833)
 val Orange70 = Color(0xFFFFC966)
 val Orange80 = Color(0xFFFFDb99)
 val Orange90 = Color(0xFFFFEDCC)
+
+// Transparências
+val Blue20_90 = Color(0xE6000066)
+val Blue20_80 = Color(0xCD000066)
+val Blue20_70 = Color(0xB3000066)
+val Blue20_60 = Color(0x99000066)
+val Blue20_50 = Color(0x90000066)
+
+val Blue90_90 = Color(0xE6CCCCFF)
