@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="registered_events_list_header">Eventos Registrados</string>
+    <string name="registered_events_list_header">Registered Events</string>
+    <string name="add_events_on_fab_click">Add events clicking on (+)</string>
 </resources>

@@ -22,10 +22,12 @@ class RegisteredEventsListViewModel @Inject constructor(
 
     private val _resgisteredEventsListFlow =
         MutableStateFlow<UiState<RegisteredEventsListModel>>(UiState.Loading)
-    val resgisteredEventsListFlow: StateFlow<UiState<RegisteredEventsListModel>> = _resgisteredEventsListFlow
+    val resgisteredEventsListFlow: StateFlow<UiState<RegisteredEventsListModel>> =
+        _resgisteredEventsListFlow
 
     fun loadRegisteredEvents() {
         viewModelScope.launch {
+            _resgisteredEventsListFlow.value = UiState.Loading
             useCase.execute(GetAllRegisteredEventsUseCase.Request)
                 .map {
                     converter.convert(it)

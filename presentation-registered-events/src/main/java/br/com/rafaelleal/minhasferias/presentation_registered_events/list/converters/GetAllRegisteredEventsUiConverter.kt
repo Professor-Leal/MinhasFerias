@@ -11,22 +11,20 @@ import javax.inject.Inject
 
 class GetAllRegisteredEventsUiConverter @Inject constructor(
     @ApplicationContext private val context: Context
-) :
-    CommonResultConverter<GetAllRegisteredEventsUseCase.Response, RegisteredEventsListModel>() {
-
-    override fun convertSuccess(data: GetAllRegisteredEventsUseCase.Response): RegisteredEventsListModel {
+) : CommonResultConverter<GetAllRegisteredEventsUseCase.Response, RegisteredEventsListModel>() {
+    override fun convertSuccess(
+        data: GetAllRegisteredEventsUseCase.Response
+    ): RegisteredEventsListModel {
         return RegisteredEventsListModel(
             headerText = context.getString(
                 R.string.registered_events_list_header,
             ),
             items = data.list.map { _event ->
                 RegisteredEventListItemModel(
-                    name = _event.name,
-                    address = _event.address,
-                    dayTime = "${_event.day} - ${_event.time}",
-                    id = _event.id
+name=_event.name, address=_event.address, dayTime="${_event.day} - ${_event.time}", id=_event.id
                 )
             }
         )
     }
 }
+

@@ -15,7 +15,6 @@ import java.util.Locale
 class RegisteredEventsListTest {
 
     val title = "Título da lista"
-
     val item01 = RegisteredEventListItemModel(
         name = "Evento 01",
         address = "Rua de Baixo",
@@ -75,7 +74,7 @@ class RegisteredEventsListTest {
         rule.setContent {
             AddEventsBanner()
         }
-        rule.onNodeWithText("Adicione eventos clicando em (+)".uppercase(Locale.ROOT)).assertExists()
+        rule.onNodeWithText("Add events clicking on (+)".uppercase(Locale.ROOT)).assertExists()
     }
 
     @Test
@@ -88,7 +87,7 @@ class RegisteredEventsListTest {
                 )
             )
         }
-        rule.onNodeWithText("Adicione eventos clicando em (+)".uppercase(Locale.ROOT)).assertExists()
+        rule.onNodeWithText("Add events clicking on (+)".uppercase(Locale.ROOT)).assertExists()
     }
 
 

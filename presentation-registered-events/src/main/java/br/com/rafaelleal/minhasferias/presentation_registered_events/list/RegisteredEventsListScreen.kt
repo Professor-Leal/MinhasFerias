@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,8 @@ import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.White
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventListItemModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventsListModel
 import java.util.Locale
+import androidx.compose.ui.tooling.preview.Preview
+import br.com.rafaelleal.minhasferias.presentation_registered_events.R
 
 @Composable
 fun RegisteredEventsListScreen(
@@ -42,26 +45,29 @@ fun RegisteredEventsListScreen(
     }
 }
 
-internal val itemsMock: List<RegisteredEventListItemModel> = listOf(
-    RegisteredEventListItemModel(
-        name = "Evento 01 ",
-        address = "Rua da Esquina",
-        dayTime = "12/12/2023 - 12:00",
-        id = 1
-    ),
-    RegisteredEventListItemModel(
-        name = "Evento 02 ",
-        address = "Do outro lado de lá",
-        dayTime = "13/12/2023 - 14:00",
-        id = 2
-    ),
-    RegisteredEventListItemModel(
-        name = "Evento 03 ",
-        address = "Logo Ali",
-        dayTime = "15/12/2023 - 17:00",
-        id = 3
-    ),
+internal val itemMock01 = RegisteredEventListItemModel(
+    name = "Evento 01 ",
+    address = "Rua da Esquina",
+    dayTime = "12/12/2023 - 12:00",
+    id = 1
 )
+internal val itemMock02 = RegisteredEventListItemModel(
+    name = "Evento 02 ",
+    address = "Do outro lado de lá",
+    dayTime = "13/12/2023 - 14:00",
+    id = 2
+)
+internal val itemMock03 = RegisteredEventListItemModel(
+    name = "Evento 03 ",
+    address = "Logo Ali",
+    dayTime = "15/12/2023 - 17:00",
+    id = 3
+)
+internal val itemsMock: List<RegisteredEventListItemModel> = listOf(
+   itemMock01, itemMock02, itemMock03
+)
+
+internal val listModelMock =  RegisteredEventsListModel("Título Preview", itemsMock)
 
 @Composable
 fun RegisteredEventsList(
@@ -81,12 +87,19 @@ fun RegisteredEventsList(
 
             items(
 //                items
-            registeredEventsListModel.items
+                registeredEventsListModel.items
             ) { item ->
                 RegisteredEventsListItem(item)
             }
         }
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun RegisteredEventsListPreview() {
+    RegisteredEventsList(listModelMock)
 }
 
 @Composable
@@ -107,6 +120,13 @@ fun RegisteredEventsListHeader(
             color = Navy
         )
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun RegisteredEventsListHeaderPreview() {
+    RegisteredEventsListHeader("Título Preview")
 }
 
 @Composable
@@ -149,6 +169,12 @@ fun RegisteredEventsListItem(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun RegisteredEventsListItemPreview() {
+    RegisteredEventsListItem(itemMock01)
+}
+
 @Composable
 fun AddEventsBanner() {
     Box(
@@ -159,7 +185,7 @@ fun AddEventsBanner() {
     ) {
         Text(
             modifier = Modifier.padding(16.dp),
-            text = "Adicione eventos clicando em (+)".uppercase(Locale.ROOT),
+            text = stringResource(R.string.add_events_on_fab_click).uppercase(Locale.ROOT),
             fontSize = 36.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
@@ -167,3 +193,11 @@ fun AddEventsBanner() {
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun AddEventsBannerPreview() {
+    AddEventsBanner()
+}
+
+
