@@ -49,7 +49,6 @@ class RegisteredEventsListTest {
         rule.onNodeWithText("Evento 01").assertExists()
         rule.onNodeWithText("Rua de Baixo").assertExists()
         rule.onNodeWithText("01/01/2023 - 12:00").assertExists()
-        Thread.sleep(1000L)
     }
 
     @Test
@@ -69,7 +68,6 @@ class RegisteredEventsListTest {
         rule.onNodeWithText("Evento 02").assertExists()
         rule.onNodeWithText("Rua de Cima").assertExists()
         rule.onNodeWithText("01/01/2023 - 13:00").assertExists()
-        Thread.sleep(1000L)
     }
 
     @Test
@@ -78,7 +76,6 @@ class RegisteredEventsListTest {
             AddEventsBanner()
         }
         rule.onNodeWithText("Adicione eventos clicando em (+)".uppercase(Locale.ROOT)).assertExists()
-        Thread.sleep(1000L)
     }
 
     @Test
@@ -92,7 +89,6 @@ class RegisteredEventsListTest {
             )
         }
         rule.onNodeWithText("Adicione eventos clicando em (+)".uppercase(Locale.ROOT)).assertExists()
-        Thread.sleep(1000L)
     }
 
 

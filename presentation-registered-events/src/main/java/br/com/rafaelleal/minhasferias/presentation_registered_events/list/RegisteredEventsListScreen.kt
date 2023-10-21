@@ -42,7 +42,7 @@ fun RegisteredEventsListScreen(
     }
 }
 
-internal val items: List<RegisteredEventListItemModel> = listOf(
+internal val itemsMock: List<RegisteredEventListItemModel> = listOf(
     RegisteredEventListItemModel(
         name = "Evento 01 ",
         address = "Rua da Esquina",

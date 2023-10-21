@@ -11,6 +11,7 @@ import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun <T : Any> CommonScreen(state: UiState<T>, onSuccess: @Composable (T) -> Unit) {
@@ -24,9 +25,6 @@ fun <T : Any> CommonScreen(state: UiState<T>, onSuccess: @Composable (T) -> Unit
         is UiState.Success -> {
             onSuccess(state.data)
         }
-        is UiState.Waiting ->{
-            Waiting()
-        }
     }
 }
 
@@ -36,7 +34,8 @@ fun Error(errorMessage: String) {
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
     ) {
-        Snackbar {
+        Snackbar( modifier = Modifier
+            .testTag("Snackbar")) {
             Text(text = errorMessage)
         }
     }
@@ -45,7 +44,8 @@ fun Error(errorMessage: String) {
 @Composable
 fun Loading() {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+                .testTag("Loading"),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -53,13 +53,3 @@ fun Loading() {
     }
 }
 
-@Composable
-fun Waiting() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        CircularProgressIndicator()
-    }
-}
