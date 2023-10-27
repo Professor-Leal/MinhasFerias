@@ -3,26 +3,22 @@ package br.com.rafaelleal.minhasferias
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue90
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Navy
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import br.com.rafaelleal.minhasferias.presentation_common.sealed.NavRoutes
+import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToAddNewEvent
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListScreen
+import br.com.rafaelleal.minhasferias.presentation_registered_events.single.AddRegisteredEventScreen
 import br.com.rafaelleal.minhasferias.ui.theme.MinhasFériasTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,7 +28,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MinhasFériasTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -46,20 +41,33 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        RegisteredEventsListScreen(hiltViewModel())
-        FloatingActionButton(
-            modifier = Modifier
-                .padding(all = 16.dp)
-                .align(alignment = Alignment.BottomEnd),
-            onClick = { },
-            containerColor = Blue90,
-            contentColor = Navy,
-            shape = CircleShape
+    val navController = rememberNavController()
+    AppNavHost(navController)
+}
+
+@Composable
+fun AppNavHost( navController: NavHostController) {
+    NavHost(navController, startDestination = NavRoutes.Events.route) {
+        composable(route = NavRoutes.Events.route) {
+            RegisteredEventsListScreen(
+                hiltViewModel(),
+                { navController.navigateToAddNewEvent() }
+            )
+        }
+        composable(
+            route = NavRoutes.AddNewEvent.route,
         ) {
-            Icon(Icons.Filled.Add, "Floating action button.")
+            AddRegisteredEventScreen(
+                hiltViewModel()
+            )
         }
     }
+
+}
+@Preview(showBackground = true)
+@Composable
+fun AppNavHostPreview() {
+    AppNavHost( rememberNavController() )
 }
 
 @Preview(showBackground = true)
@@ -83,4 +91,5 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
+
 

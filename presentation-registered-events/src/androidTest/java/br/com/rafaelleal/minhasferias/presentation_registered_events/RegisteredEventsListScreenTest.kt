@@ -1,18 +1,21 @@
 package br.com.rafaelleal.minhasferias.presentation_registered_events
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.AddEventsBanner
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsList
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListHeader
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListItem
+import br.com.rafaelleal.minhasferias.presentation_registered_events.list.ScaffoldBody
+import br.com.rafaelleal.minhasferias.presentation_registered_events.list.listModelMock
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventListItemModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventsListModel
 import org.junit.Rule
 import org.junit.Test
 import java.util.Locale
 
-class RegisteredEventsListTest {
+class RegisteredEventsListScreenTest {
 
     val title = "Título da lista"
     val item01 = RegisteredEventListItemModel(
@@ -32,12 +35,19 @@ class RegisteredEventsListTest {
     val rule = createComposeRule()
 
     @Test
+    fun show_fab_onResume(){
+        rule.setContent {
+            ScaffoldBody(registeredEventListModel = listModelMock)
+        }
+        rule.onNodeWithContentDescription("fab_add_new_event.").assertExists()
+    }
+
+    @Test
     fun show_RegisteredEventsListHeader() {
         rule.setContent {
             RegisteredEventsListHeader(title)
         }
         rule.onNodeWithText(title).assertExists()
-        Thread.sleep(1000L)
     }
 
     @Test

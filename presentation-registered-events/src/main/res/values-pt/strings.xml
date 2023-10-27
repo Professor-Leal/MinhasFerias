@@ -2,5 +2,5 @@
 <resources>
     <string name="registered_events_list_header">Eventos Registrados</string>
     <string name="add_events_on_fab_click">Adicione eventos clicando em (+)</string>
-
+    <string name="add_new_event_title">Adicione um Novo Evento</string>
 </resources>

@@ -1,4 +1,4 @@
-package br.com.rafaelleal.minhasferias.presentation_registered_events.list
+package br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
