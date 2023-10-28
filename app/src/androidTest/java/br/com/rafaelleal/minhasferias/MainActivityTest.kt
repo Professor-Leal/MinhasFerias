@@ -1,57 +1,65 @@
 package br.com.rafaelleal.minhasferias
 
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.testing.TestNavHostController
-import br.com.rafaelleal.minhasferias.presentation_common.sealed.NavRoutes
-import br.com.rafaelleal.minhasferias.presentation_registered_events.list.ScaffoldBody
-import org.junit.Assert.assertEquals
+import androidx.compose.ui.test.performTextInput
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-
+@HiltAndroidTest
 class MainActivityTest {
 
-    @get:Rule
-    val rule = createComposeRule()
+    @get:Rule(order = 0)
+    var hiltAndroidRule = HiltAndroidRule(this)
 
+    @get:Rule(order = 1)
+    var composeTestRule = createAndroidComposeRule(MainActivity::class.java)
 
-    @Test
-    fun show_fab_onResume(){
-        rule.setContent {
-            App()
-        }
-        rule.onNodeWithContentDescription("fab_add_new_event.").assertExists()
+    @Before
+    fun setUp() {
+        hiltAndroidRule.inject()
     }
 
+    @Test
+    fun onResume_shouldShowListItemsAndFab() {
+        composeTestRule
+            .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
+            .assertIsDisplayed()
 
-//    lateinit var navController: TestNavHostController
+        composeTestRule.onNodeWithText("name 1", useUnmergedTree = true)
+            .assertExists()
+        composeTestRule.onNodeWithText("name 2", useUnmergedTree = true)
+            .assertExists()
+    }
 
-//    @Before
-//    fun setupRallyNavHost() {
-//        composeTestRule.setContent {
-//            // Creates a TestNavHostController
-//            navController = TestNavHostController(LocalContext.current)
-//            // Sets a ComposeNavigator to the navController so it can navigate through composables
-//            navController.navigatorProvider.addNavigator(ComposeNavigator())
-//            AppNavHost(navController = navController)
-//        }
-//    }
+    @Test
+    fun clickOnFab_shouldNavigateToAddNewRegisteredEvent() {
+        composeTestRule
+            .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
+            .performClick()
 
-//    // Falha por causa do hilt, por enquanto
-//    @Test
-//    fun navigateToAddNewEventScreen(){
-//        composeTestRule.onNodeWithContentDescription("fab_add_new_event.")
-//            .performClick()
-//
-//        val route = navController.currentBackStackEntry?.destination?.route
-//        assertEquals(route, NavRoutes.AddNewEvent.route)
-//    }
+        composeTestRule.onNodeWithTag("AddRegisteredEventsListHeader", useUnmergedTree = true)
+            .assertExists()
+    }
 
+    @Test
+    fun shouldFillForm_whenWritingOnAddEventScreen(){
+        composeTestRule
+            .onNodeWithContentDescription("fab_add_new_event", useUnmergedTree = true)
+            .performClick()
 
+        composeTestRule.onNodeWithTag("Nome do Evento").performTextInput("Novo Evento Teste")
+        composeTestRule.onNodeWithTag("Dia do Evento").performTextInput("01/01/2023")
+        composeTestRule.onNodeWithTag("Hora do Evento").performTextInput("20:00")
+        composeTestRule.onNodeWithTag("Endereço").performTextInput("Rua de cima")
+
+    }
 
 }

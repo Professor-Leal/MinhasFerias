@@ -32,16 +32,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    App()
-                }
+                    val navController = rememberNavController()
+                    App(navController = navController)                }
             }
         }
     }
 }
 
 @Composable
-fun App() {
-    val navController = rememberNavController()
+fun App(navController: NavHostController) {
     AppNavHost(navController)
 }
 
@@ -50,9 +49,8 @@ fun AppNavHost( navController: NavHostController) {
     NavHost(navController, startDestination = NavRoutes.Events.route) {
         composable(route = NavRoutes.Events.route) {
             RegisteredEventsListScreen(
-                hiltViewModel(),
-                { navController.navigateToAddNewEvent() }
-            )
+                hiltViewModel()
+            ) { navController.navigateToAddNewEvent() }
         }
         composable(
             route = NavRoutes.AddNewEvent.route,
@@ -64,6 +62,7 @@ fun AppNavHost( navController: NavHostController) {
     }
 
 }
+
 @Preview(showBackground = true)
 @Composable
 fun AppNavHostPreview() {
@@ -73,7 +72,7 @@ fun AppNavHostPreview() {
 @Preview(showBackground = true)
 @Composable
 fun AppPreview() {
-    App()
+    App(rememberNavController())
 }
 
 @Composable

@@ -1,8 +1,12 @@
 package br.com.rafaelleal.minhasferias.presentation_registered_events
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.navigation.compose.ComposeNavigator
+import br.com.rafaelleal.minhasferias.domain.usecase.UseCase
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.AddEventsBanner
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsList
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListHeader
@@ -11,10 +15,23 @@ import br.com.rafaelleal.minhasferias.presentation_registered_events.list.Scaffo
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.listModelMock
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventListItemModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventsListModel
+import br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels.RegisteredEventsListViewModel
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.Dispatchers
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.util.Locale
+import javax.inject.Inject
+import androidx.navigation.testing.TestNavHostController
+import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToAddNewEvent
 
+@HiltAndroidTest
 class RegisteredEventsListScreenTest {
 
     val title = "Título da lista"
@@ -34,12 +51,22 @@ class RegisteredEventsListScreenTest {
     @get:Rule
     val rule = createComposeRule()
 
+    lateinit var navController: TestNavHostController
+
     @Test
     fun show_fab_onResume(){
         rule.setContent {
-            ScaffoldBody(registeredEventListModel = listModelMock)
+            navController = TestNavHostController(LocalContext.current)
+            navController.navigatorProvider.addNavigator(ComposeNavigator())
+
+            ScaffoldBody(registeredEventListModel = listModelMock){
+                navController.navigateToAddNewEvent()
+            }
         }
         rule.onNodeWithContentDescription("fab_add_new_event.").assertExists()
+        rule.onNodeWithContentDescription("fab_add_new_event.").performClick()
+        rule.onNodeWithContentDescription("Add a New Event").assertExists()
+
     }
 
     @Test

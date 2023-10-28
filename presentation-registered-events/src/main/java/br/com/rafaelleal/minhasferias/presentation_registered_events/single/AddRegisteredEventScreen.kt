@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -81,6 +82,7 @@ fun AddRegisteredEventsListHeader(
             .padding(16.dp)
             .fillMaxWidth()
             .wrapContentSize(Alignment.Center)
+            .testTag("AddRegisteredEventsListHeader")
     ) {
         Text(
             text = title,
@@ -115,16 +117,6 @@ fun AddTextInput(label: String) {
 
                 )
         },
-        placeholder = {
-            Text(
-                text = label,
-                style = TextStyle(
-                    color = MaterialTheme.colors.primaryVariant,
-                    textAlign = TextAlign.Center
-                ),
-                fontSize = 18.sp,
-            )
-        },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = White,
             focusedBorderColor = MaterialTheme.colors.primary,
@@ -136,6 +128,7 @@ fun AddTextInput(label: String) {
             .padding(8.dp)
             .wrapContentSize()
             .fillMaxWidth(1f)
+            .testTag(label)
     )
 }
 

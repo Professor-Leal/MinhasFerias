@@ -64,5 +64,6 @@ dependencies {
 
     // Compose tests:
     androidTestImplementation androidTest.composeUiTestJunit
-    debugImplementation debug.uiTestManifest
+    debugImplementation androidTest.composeManifest
+
 }

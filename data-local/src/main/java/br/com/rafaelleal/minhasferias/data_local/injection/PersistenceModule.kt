@@ -4,9 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.AppDatabase
 import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.dao.RegisteredEventDao
-import br.com.rafaelleal.minhasferias.data_repository.data_source.local.RegisteredEventsLocalDataSource
-import br.com.rafaelleal.minhasferias.data_repository.repositories.RegisteredEventsRepositoryImpl
-import br.com.rafaelleal.minhasferias.domain.repositories.RegisteredEventsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,6 +13,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
 
 internal const val DATABASE_NAME = "MINHAS_FERIAS_DATABASE"
+
 @Module
 @InstallIn(ViewModelComponent::class)
 class PersistenceModule {

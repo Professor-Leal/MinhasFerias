@@ -10,9 +10,8 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 class AppModule {
-
     @Provides
     fun provideUseCaseConfiguration() = UseCase.Configuration(Dispatchers.IO)
 }

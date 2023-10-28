@@ -5,7 +5,6 @@ plugins {
     id 'kotlin-kapt'
 }
 
-
 android {
     namespace 'br.com.rafaelleal.minhasferias'
     compileSdk defaultCompileSdkVersion
@@ -16,17 +15,19 @@ android {
         minSdk defaultMinSdkVersion
         targetSdk defaultTargetSdkVersion
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "br.com.rafaelleal.minhasferias.CustomTestRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
+        testOptions {
+            execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        }
+
         vectorDrawables {
             useSupportLibrary true
         }
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -84,6 +85,10 @@ dependencies {
 
     implementation coroutines.coroutinesAndroid
 
+    implementation persistence.roomRuntime
+    implementation persistence.roomKtx
+    kapt persistence.roomCompiler
+    implementation persistence.roomCommon
 
     // Hilt
     implementation di.hiltAndroid
@@ -98,11 +103,6 @@ dependencies {
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
     implementation platform('androidx.compose:compose-bom:2022.10.00')
 
-
-    testImplementation test.junit
-    androidTestImplementation androidTest.navigationTesting
-
-
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
@@ -112,7 +112,27 @@ dependencies {
 
     // Compose tests:
     androidTestImplementation androidTest.composeUiTestJunit
-    debugImplementation debug.uiTestManifest
+
+    testImplementation di.hiltAndrodiTesting
+    kaptTest di.hiltAndroidCompiler
+    androidTestImplementation di.hiltAndrodiTesting
+    kaptAndroidTest di.hiltAndroidCompiler
+
+
+    testImplementation test.junit
+    androidTestImplementation androidTest.navigationTesting
+
+    androidTestImplementation androidTest.junit
+    androidTestImplementation androidTest.espressoCore
+    androidTestImplementation androidTest.idlingResource
+    androidTestImplementation androidTest.core
+    androidTestImplementation androidTest.rules
+    androidTestImplementation androidTest.runner
+    androidTestImplementation androidTest.hilt
+    kaptAndroidTest androidTest.hiltCompiler
+    androidTestImplementation androidTest.composeUiTestJunit
+    debugImplementation androidTest.composeManifest
+    androidTestUtil androidTest.orchestrator
 
 }
 
