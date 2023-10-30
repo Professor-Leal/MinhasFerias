@@ -1,6 +1,14 @@
 package br.com.rafaelleal.minhasferias.presentation_registered_events.list
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +27,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -27,9 +41,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.rafaelleal.minhasferias.presentation_common.screens.CommonScreen
+import br.com.rafaelleal.minhasferias.presentation_common.sealed.UiState
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Black
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue10
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue90
@@ -40,6 +56,9 @@ import br.com.rafaelleal.minhasferias.presentation_registered_events.R
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventListItemModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventsListModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels.RegisteredEventsListViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 
@@ -74,11 +93,17 @@ fun RegisteredEventsListScreen(
     viewModel: RegisteredEventsListViewModel,
     onClickAddNewRegisteredEvent: () -> Unit = {}
 ) {
-    viewModel.loadRegisteredEvents()
+    var uiState: UiState<RegisteredEventsListModel> by remember {
+        mutableStateOf(UiState.Loading)
+    }
+    LaunchedEffect(true) {
+        viewModel.loadRegisteredEvents()
+    }
     viewModel.resgisteredEventsListFlow.collectAsState().value.let { state ->
-        CommonScreen(state = state) {
-            ScaffoldBody(it, onClickAddNewRegisteredEvent)
-        }
+        uiState = state
+    }
+    CommonScreen(state = uiState) {
+        ScaffoldBody(it, onClickAddNewRegisteredEvent)
     }
 }
 
@@ -88,22 +113,55 @@ fun ScaffoldBody(
     registeredEventListModel: RegisteredEventsListModel,
     onClickAddNewRegisteredEvent: () -> Unit = {}
 ) {
+    var shown by remember {
+        mutableStateOf(false)
+    }
+    val coroutineScope = rememberCoroutineScope()
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier
-                    .padding(all = 16.dp)
-                    .testTag("fab_add_new_event"),
-                onClick = onClickAddNewRegisteredEvent,
-                containerColor = Blue90,
-                contentColor = Navy,
-                shape = CircleShape
+            AnimatedVisibility(
+                visible = shown,
+                enter = slideIn(tween(600, easing = LinearOutSlowInEasing)) { fullSize ->
+                    // Specifies the starting offset of the slide-in to be 1/4 of the width to the right,
+                    // 100 (pixels) below the content position, which results in a simultaneous slide up
+                    // and slide left.
+                    IntOffset(fullSize.width / 4, fullSize.width / 4)
+                } + fadeIn(
+                    // Fade in with the initial alpha of 0.3f.
+                    initialAlpha = 0.3f
+                ),
+                exit = slideOut(tween(600, easing = FastOutSlowInEasing)) { fullSize ->
+                    // The offset can be entirely independent of the size of the content. This specifies
+                    // a target offset 180 pixels to the left of the content, and 50 pixels below. This will
+                    // produce a slide-left combined with a slide-down.
+                    IntOffset(fullSize.width / 4, fullSize.width / 4)
+                } + fadeOut(),
             ) {
-                Icon(Icons.Filled.Add, "fab_add_new_event")
+                FloatingActionButton(
+                    modifier = Modifier
+                        .padding(all = 16.dp)
+                        .testTag("fab_add_new_event"),
+                    onClick = {
+                        coroutineScope.launch {
+                            shown = false
+                            delay(300L)
+                            onClickAddNewRegisteredEvent()
+                        }
+                    },
+                    containerColor = Blue90,
+                    contentColor = Navy,
+                    shape = CircleShape
+                ) {
+                    Icon(Icons.Filled.Add, "fab_add_new_event")
+                }
             }
         }
     ) {
         RegisteredEventsList(registeredEventListModel)
+        LaunchedEffect(true) {
+            delay(100L)
+            shown = true
+        }
     }
 
 }
