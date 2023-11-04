@@ -11,4 +11,7 @@ class RegisteredEventsRepositoryImpl @Inject constructor(
 ) : RegisteredEventsRepository {
     override fun getAllRegisteredEvents(): Flow<List<RegisteredEvent>>
     = registeredEventsLocalDataSource.getAllRegisteredEvents()
+
+    override fun saveRegisteredEvent(registeredEvent: RegisteredEvent)
+    = registeredEventsLocalDataSource.saveRegisteredEvent(registeredEvent)
 }

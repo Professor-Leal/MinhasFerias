@@ -50,6 +50,7 @@ dependencies {
     implementation androidx.composeMaterial
     implementation androidx.composeUiToolingPreview
     implementation androidx.lifecycleRuntimeKtx
+    implementation androidx.lifecycleRuntimeCompose
     implementation androidx.composeActivity
     implementation androidx.navigationCompose
     implementation androidx.viewModelKtx

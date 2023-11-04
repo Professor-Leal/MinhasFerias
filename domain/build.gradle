@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace  'br.com.rafaelleal.minhasferias.domain'
+    namespace 'br.com.rafaelleal.minhasferias.domain'
     compileSdk defaultCompileSdkVersion
 
     defaultConfig {

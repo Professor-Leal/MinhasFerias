@@ -5,5 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface RegisteredEventsLocalDataSource {
     fun getAllRegisteredEvents(): Flow<List<RegisteredEvent>>
+    fun saveRegisteredEvent(registeredEvent: RegisteredEvent)
 }
 

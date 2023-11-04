@@ -33,6 +33,15 @@ class RegisteredEventsLocalDataSourceImplTest {
         verify(dao).getAll()
     }
 
+    @ExperimentalCoroutinesApi
+    @Test
+    fun saveRegisteredEvent(): Unit = runBlocking {
+        val item  = RegisteredEvent( "Evento 01", "Endereço", "12:00", "01/01/2023", 1)
+        val itemEntity  = RegisteredEventEntity( "Evento 01", "Endereço", "12:00", "01/01/2023",1 )
+        dataSource.saveRegisteredEvent(item)
+        verify(dao).save(itemEntity)
+    }
+
 }
 
 

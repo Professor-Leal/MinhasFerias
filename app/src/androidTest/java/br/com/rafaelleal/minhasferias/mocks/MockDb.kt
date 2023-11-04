@@ -1,14 +1,29 @@
 package br.com.rafaelleal.minhasferias.mocks
 
 import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class MockDb {
     companion object {
+        var id = 1L
+
         var registeredEventList = mutableListOf<RegisteredEvent>()
 
+        private val _resgisteredEventsListFlow = MutableStateFlow<List<RegisteredEvent>>(listOf())
+        fun getAllRegisteredEvents(): StateFlow<List<RegisteredEvent>> = _resgisteredEventsListFlow
+
+
         fun clearAll() {
+            id = 1L
             registeredEventList = mutableListOf<RegisteredEvent>()
         }
+
+        fun addRegisteredEvent(registeredEvent: RegisteredEvent) {
+            registeredEventList.add(registeredEvent.copy(id = id++))
+            _resgisteredEventsListFlow.value = registeredEventList
+        }
+
         fun addTwoRegisteredEventsToDB() {
             registeredEventList = mutableListOf<RegisteredEvent>(
                 RegisteredEvent(
@@ -26,6 +41,7 @@ class MockDb {
                     id = 2L
                 )
             )
+            _resgisteredEventsListFlow.value = registeredEventList
         }
     }
 }

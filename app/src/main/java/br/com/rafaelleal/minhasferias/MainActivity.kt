@@ -1,8 +1,11 @@
 package br.com.rafaelleal.minhasferias
 
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -16,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.NavRoutes
+import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateSingleTopTo
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToAddNewEvent
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListScreen
 import br.com.rafaelleal.minhasferias.presentation_registered_events.single.AddRegisteredEventScreen
@@ -57,7 +61,7 @@ fun AppNavHost( navController: NavHostController) {
         ) {
             AddRegisteredEventScreen(
                 hiltViewModel()
-            )
+            ){ navController.navigateSingleTopTo(NavRoutes.Events.route) }
         }
     }
 

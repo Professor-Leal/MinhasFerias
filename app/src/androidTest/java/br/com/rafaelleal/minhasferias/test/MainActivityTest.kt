@@ -1,8 +1,10 @@
 package br.com.rafaelleal.minhasferias.test
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -65,10 +67,11 @@ class MainActivityTest {
         composeTestRule
             .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
             .assertIsDisplayed()
+
         composeTestRule.onNodeWithText("name 1", useUnmergedTree = true)
-            .assertExists()
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("name 2", useUnmergedTree = true)
-            .assertExists()
+            .assertIsDisplayed()
     }
 
     @Test
@@ -93,13 +96,15 @@ class MainActivityTest {
     }
 
     @Test
-    fun shouldFillForm_whenWritingOnAddEventScreen() {
+    fun shouldFillForm_whenWritingOnAddEventScreenAndSave() {
+
         composeTestRule.waitUntil(
             timeoutMillis = timeOutShowFab
         ) {
             composeTestRule.onAllNodesWithTag("fab_add_new_event")
                 .fetchSemanticsNodes().size == 1
         }
+//        Thread.sleep(2000)
         composeTestRule
             .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
             .performClick()
@@ -115,10 +120,38 @@ class MainActivityTest {
         composeTestRule.onNodeWithTag("Hora do Evento").performTextInput("20:00")
         composeTestRule.onNodeWithTag("Endereço").performTextInput("Rua de cima")
 
-        composeTestRule.onNodeWithText("Novo Evento Teste").assertIsDisplayed()
-        composeTestRule.onNodeWithText("01/01/2023").assertIsDisplayed()
-        composeTestRule.onNodeWithText("20:00").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Rua de cima").assertIsDisplayed()
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutShowFab
+        ) {
+            composeTestRule.onAllNodesWithTag("SaveRegisteredEventButton")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        composeTestRule
+            .onAllNodesWithText("Novo Evento Teste").assertCountEquals(2)
+        composeTestRule
+            .onAllNodesWithText("01/01/2023").assertCountEquals(1)
+        composeTestRule
+            .onAllNodesWithText("20:00").assertCountEquals(1)
+        composeTestRule
+            .onAllNodesWithText("01/01/2023 - 20:00").assertCountEquals(1)
+        composeTestRule
+            .onAllNodesWithText("Rua de cima").assertCountEquals(2)
+
+//        Thread.sleep(2000)
+
+        composeTestRule.onNodeWithTag("SaveRegisteredEventButton").performClick()
+
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutShowFab
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                .fetchSemanticsNodes().size == 1
+        }
+        composeTestRule.onNodeWithText("Novo Evento Teste", useUnmergedTree = true)
+            .assertIsDisplayed()
+
+//        Thread.sleep(3000)
 
     }
 

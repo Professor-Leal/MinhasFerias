@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface RegisteredEventsRepository {
     fun getAllRegisteredEvents(): Flow<List<RegisteredEvent>>
+    fun saveRegisteredEvent(registeredEvent: RegisteredEvent)
 }

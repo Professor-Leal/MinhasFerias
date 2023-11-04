@@ -1,6 +1,12 @@
 package br.com.rafaelleal.minhasferias.presentation_registered_events.list
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -10,6 +16,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,9 +40,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
 import br.com.rafaelleal.minhasferias.presentation_common.screens.CommonScreen
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.UiState
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Black
@@ -53,8 +64,8 @@ import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Navy
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Orange30
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.White
 import br.com.rafaelleal.minhasferias.presentation_registered_events.R
-import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventListItemModel
-import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventsListModel
+import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventListItemModel
+import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventsListModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels.RegisteredEventsListViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -96,15 +107,38 @@ fun RegisteredEventsListScreen(
     var uiState: UiState<RegisteredEventsListModel> by remember {
         mutableStateOf(UiState.Loading)
     }
-    LaunchedEffect(true) {
+
+    LaunchedEffect(true ) {
         viewModel.loadRegisteredEvents()
     }
     viewModel.resgisteredEventsListFlow.collectAsState().value.let { state ->
+        Log.i("RegisteredEventsListScreen","resgisteredEventsListFlow: ${uiState}")
         uiState = state
     }
     CommonScreen(state = uiState) {
-        ScaffoldBody(it, onClickAddNewRegisteredEvent)
+        ScaffoldBody(it, onClickAddNewRegisteredEvent )
+        HomeBackHandler()
     }
+
+
+
+
+
+}
+
+@Composable
+fun HomeBackHandler() {
+    val activity = (LocalContext.current as? Activity)
+    var pressedTime by remember { mutableStateOf(0L)}
+
+    BackHandler(enabled = true, onBack = {
+        if (pressedTime + 2000 > System.currentTimeMillis()) {
+            activity?.finish()
+        } else {
+            Toast.makeText(activity, "Press back again to exit", Toast.LENGTH_SHORT).show();
+        }
+        pressedTime = System.currentTimeMillis();
+    })
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -113,44 +147,27 @@ fun ScaffoldBody(
     registeredEventListModel: RegisteredEventsListModel,
     onClickAddNewRegisteredEvent: () -> Unit = {}
 ) {
-    var shown by remember {
-        mutableStateOf(false)
-    }
+    var shown by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
-        floatingActionButton = {
-            AnimatedVisibility(
-                visible = shown,
+        floatingActionButton = { AnimatedVisibility( visible = shown,
                 enter = slideIn(tween(600, easing = LinearOutSlowInEasing)) { fullSize ->
-                    // Specifies the starting offset of the slide-in to be 1/4 of the width to the right,
-                    // 100 (pixels) below the content position, which results in a simultaneous slide up
-                    // and slide left.
                     IntOffset(fullSize.width / 4, fullSize.width / 4)
-                } + fadeIn(
-                    // Fade in with the initial alpha of 0.3f.
-                    initialAlpha = 0.3f
-                ),
+                }
+                        + fadeIn( initialAlpha = 0.3f ),
                 exit = slideOut(tween(600, easing = FastOutSlowInEasing)) { fullSize ->
-                    // The offset can be entirely independent of the size of the content. This specifies
-                    // a target offset 180 pixels to the left of the content, and 50 pixels below. This will
-                    // produce a slide-left combined with a slide-down.
-                    IntOffset(fullSize.width / 4, fullSize.width / 4)
-                } + fadeOut(),
+                     IntOffset(fullSize.width / 4, fullSize.width / 4)
+                }
+                        + fadeOut(),
             ) {
-                FloatingActionButton(
-                    modifier = Modifier
-                        .padding(all = 16.dp)
-                        .testTag("fab_add_new_event"),
-                    onClick = {
-                        coroutineScope.launch {
-                            shown = false
+                FloatingActionButton( modifier = Modifier
+                    .padding(all = 16.dp)
+                    .testTag("fab_add_new_event"),
+                    onClick = { coroutineScope.launch {shown = false
                             delay(300L)
                             onClickAddNewRegisteredEvent()
                         }
-                    },
-                    containerColor = Blue90,
-                    contentColor = Navy,
-                    shape = CircleShape
+                    }, containerColor = Blue90, contentColor = Navy, shape = CircleShape
                 ) {
                     Icon(Icons.Filled.Add, "fab_add_new_event")
                 }
@@ -163,7 +180,6 @@ fun ScaffoldBody(
             shown = true
         }
     }
-
 }
 
 @Preview
@@ -185,18 +201,11 @@ fun RegisteredEventsList(
     if (registeredEventsListModel.items.isEmpty()) {
         AddEventsBanner()
     } else {
-        LazyColumn(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        LazyColumn( modifier = Modifier.padding(16.dp) ) {
             item(registeredEventsListModel.headerText) {
-
                 RegisteredEventsListHeader(registeredEventsListModel.headerText)
             }
-
-            items(
-//                items
-                registeredEventsListModel.items
-            ) { item ->
+            items( registeredEventsListModel.items ) { item ->
                 RegisteredEventsListItem(item)
             }
         }
@@ -220,12 +229,8 @@ fun RegisteredEventsListHeader(
             .fillMaxWidth()
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(
-            text = title,
-            fontSize = 24.sp,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            color = Navy
+        Text(text = title, fontSize = 24.sp, textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold, color = Navy
         )
     }
 }
@@ -234,45 +239,29 @@ fun RegisteredEventsListHeader(
 @Preview(showBackground = true)
 @Composable
 fun RegisteredEventsListHeaderPreview() {
-    RegisteredEventsListHeader("Título Preview")
+    RegisteredEventsListHeader("Título")
 }
 
 @Composable
 fun RegisteredEventsListItem(
     item: RegisteredEventListItemModel
 ) {
-    Card(
-        elevation = 8.dp,
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
+    Card( elevation = 8.dp, modifier = Modifier
+        .padding(8.dp)
+        .fillMaxWidth()
+        .testTag("RegisteredEventsListItem")
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Blue90)
-        ) {
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text = item.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Navy
-            )
-            Text(
-                modifier = Modifier.padding(horizontal = 12.dp),
-                text = item.address, fontSize = 14.sp,
-                color = Black
-            )
-            Text(
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(8.dp),
-                text = item.dayTime,
-                textAlign = TextAlign.End,
-                fontSize = 14.sp,
-                color = Blue10
-            )
+        Column( modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Blue90) ) {
+            Text( modifier = Modifier.padding(8.dp), text = item.name, fontSize = 18.sp,
+                fontWeight = FontWeight.Bold, color = Navy )
+            Text( modifier = Modifier.padding(horizontal = 12.dp), text = item.address,
+                fontSize = 14.sp, color = Black )
+            Text( modifier = Modifier
+                .align(Alignment.End)
+                .padding(8.dp), text = item.dayTime,
+                textAlign = TextAlign.End, fontSize = 14.sp, color = Blue10)
         }
     }
 }

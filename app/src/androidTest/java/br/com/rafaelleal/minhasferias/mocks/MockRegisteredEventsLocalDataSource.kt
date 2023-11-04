@@ -10,10 +10,12 @@ import javax.inject.Inject
 class MockRegisteredEventsLocalDataSource @Inject constructor() : RegisteredEventsLocalDataSource {
 
 
-    override fun getAllRegisteredEvents(): Flow<List<RegisteredEvent>> = flowOf(
-        MockDb.registeredEventList.toList()
+    override fun getAllRegisteredEvents(): Flow<List<RegisteredEvent>> =
+        MockDb.getAllRegisteredEvents()
 
-    )
+    override fun saveRegisteredEvent(registeredEvent: RegisteredEvent) {
+        MockDb.addRegisteredEvent(registeredEvent)
+    }
 
 
 }

@@ -1,4 +1,4 @@
-package br.com.rafaelleal.minhasferias.presentation_registered_events.list.models
+package br.com.rafaelleal.minhasferias.presentation_registered_events.models
 
 data class RegisteredEventListItemModel(
     var name: String,

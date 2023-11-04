@@ -4,8 +4,9 @@ import android.content.Context
 import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
 import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.GetAllRegisteredEventsUseCase
 import br.com.rafaelleal.minhasferias.presentation_registered_events.R
-import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventListItemModel
-import br.com.rafaelleal.minhasferias.presentation_registered_events.list.models.RegisteredEventsListModel
+import br.com.rafaelleal.minhasferias.presentation_registered_events.converters.GetAllRegisteredEventsUiConverter
+import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventListItemModel
+import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventsListModel
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.kotlin.mock

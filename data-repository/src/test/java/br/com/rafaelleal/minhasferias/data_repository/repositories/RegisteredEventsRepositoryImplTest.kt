@@ -32,4 +32,13 @@ class RegisteredEventsRepositoryImplTest{
         verify(localRegisteredEventsDataSource).getAllRegisteredEvents()
     }
 
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun saveRegisteredEvent(): Unit = runBlocking {
+        val itemMock = mock<RegisteredEvent>()
+        repositoryImpl.saveRegisteredEvent(itemMock)
+        verify(localRegisteredEventsDataSource).saveRegisteredEvent(itemMock)
+    }
+
 }
