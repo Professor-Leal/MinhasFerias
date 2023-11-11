@@ -1,5 +1,7 @@
 package br.com.rafaelleal.minhasferias.presentation_registered_events.single
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -51,7 +53,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddRegisteredEventScreen(
     viewModel: RegisteredEventsListViewModel,
@@ -80,12 +85,14 @@ fun AddRegisteredEventScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AddRegisteredEventScreenPreview() {
     FormAddRegisteredEventScreen()
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FormAddRegisteredEventScreen(
     saveItem: (input: RegisteredEvent) -> Unit = {}
@@ -145,6 +152,7 @@ fun FormAddRegisteredEventScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun FormAddRegisteredEventScreenPreview() {
@@ -238,8 +246,21 @@ fun SaveRegisteredEventButtonPreview() {
     SaveRegisteredEventButton(true) { }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun getItem(name: String, day: String, time: String, address: String): RegisteredEvent {
     return RegisteredEvent(
-        name = name, address = address, time = time, day = day, 0L
+        name = name, address = address, time = time, day = day, getFormattedDate(day,time), 0L
     )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun getFormattedDate(day: String, time : String ): LocalDateTime{
+    val dateString = "$day $time"
+
+    // Formato da string
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+
+    // Fazendo o parsing da string para LocalDateTime
+    val dateTime = LocalDateTime.parse(dateString, formatter)
+    return dateTime
 }

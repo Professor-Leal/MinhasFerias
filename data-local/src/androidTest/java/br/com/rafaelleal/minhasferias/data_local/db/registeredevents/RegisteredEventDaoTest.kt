@@ -14,6 +14,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
+import java.time.LocalDateTime
 
 // Reference:
 // https://blog.devgenius.io/testing-room-database-with-coroutines-and-flows-testing-fundamentals-iii-5f6c3b9e4c94
@@ -28,13 +29,15 @@ class RegisteredEventDaoTest {
         name = "Evento 01",
         address = "Endereço 01",
         time = "12:00",
-        day = "01/01/2023"
+        day = "01/01/2023",
+        date = LocalDateTime.of(2023,1,1,12,0)
     )
     val item02 = RegisteredEventEntity(
         name = "Evento 02",
         address = "Endereço 02",
         time = "12:30",
-        day = "01/01/2023"
+        day = "01/01/2023",
+        date = LocalDateTime.of(2023,1,1,12,30)
     )
 
     @Before

@@ -3,6 +3,7 @@ package br.com.rafaelleal.minhasferias.data_local.injection
 import android.content.Context
 import androidx.room.Room
 import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.AppDatabase
+import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.MIGRATION_LIST
 import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.dao.RegisteredEventDao
 import dagger.Module
 import dagger.Provides
@@ -24,7 +25,9 @@ class PersistenceModule {
         Room.databaseBuilder(
             context,
             AppDatabase::class.java, DATABASE_NAME
-        ).build()
+        )
+            .addMigrations(*MIGRATION_LIST)
+            .build()
 
     @Provides
     @ViewModelScoped
