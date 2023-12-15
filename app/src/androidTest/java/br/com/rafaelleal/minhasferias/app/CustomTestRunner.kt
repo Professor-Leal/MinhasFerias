@@ -12,3 +12,4 @@ class CustomTestRunner : AndroidJUnitRunner() {
         return super.newApplication(cl, HiltTestApplication::class.java.name, context)
     }
 }
+

@@ -107,23 +107,16 @@ fun RegisteredEventsListScreen(
     var uiState: UiState<RegisteredEventsListModel> by remember {
         mutableStateOf(UiState.Loading)
     }
-
-    LaunchedEffect(true ) {
+    LaunchedEffect(true) {
         viewModel.loadRegisteredEvents()
     }
     viewModel.resgisteredEventsListFlow.collectAsState().value.let { state ->
-        Log.i("RegisteredEventsListScreen","resgisteredEventsListFlow: ${uiState}")
         uiState = state
     }
     CommonScreen(state = uiState) {
-        ScaffoldBody(it, onClickAddNewRegisteredEvent )
+        ScaffoldBody(it, onClickAddNewRegisteredEvent)
         HomeBackHandler()
     }
-
-
-
-
-
 }
 
 @Composable
@@ -149,7 +142,8 @@ fun ScaffoldBody(
 ) {
     var shown by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    Scaffold(
+    Scaffold( modifier = Modifier
+        .testTag("RegisteredEventsListScreen"),
         floatingActionButton = { AnimatedVisibility( visible = shown,
                 enter = slideIn(tween(600, easing = LinearOutSlowInEasing)) { fullSize ->
                     IntOffset(fullSize.width / 4, fullSize.width / 4)

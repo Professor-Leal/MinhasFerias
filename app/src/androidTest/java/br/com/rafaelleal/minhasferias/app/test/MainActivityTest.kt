@@ -1,5 +1,7 @@
 package br.com.rafaelleal.minhasferias.app.test
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -17,6 +19,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @HiltAndroidTest
@@ -98,6 +103,11 @@ class MainActivityTest {
     @Test
     fun shouldFillForm_whenWritingOnAddEventScreenAndSave() {
 
+        val monthInt = LocalDate.now().monthValue
+        val yearInt = LocalDate.now().year
+        val selectedDateString = formatDate(LocalDate.of( yearInt, monthInt, 17 ) )
+        val selectedTimeString = formatTime(LocalTime.of(4, 52 ))
+
         composeTestRule.waitUntil(
             timeoutMillis = timeOutShowFab
         ) {
@@ -119,11 +129,43 @@ class MainActivityTest {
         composeTestRule.onNodeWithTag("SaveRegisteredEventButton").assertDoesNotExist()
         composeTestRule.onNodeWithTag("Nome do Evento").performTextInput("Novo Evento Teste")
         composeTestRule.onNodeWithTag("SaveRegisteredEventButton").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("Dia do Evento").performTextInput("01/01/2023")
-        composeTestRule.onNodeWithTag("SaveRegisteredEventButton").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("Hora do Evento").performTextInput("20:00")
-        composeTestRule.onNodeWithTag("SaveRegisteredEventButton").assertDoesNotExist()
         composeTestRule.onNodeWithTag("Endereço").performTextInput("Rua de cima")
+
+        // clicar no dia do evento para abrir o diálogo
+        composeTestRule.onNodeWithTag("Dia do Evento").performClick()
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutShowFab
+        ) {
+            composeTestRule.onAllNodesWithText("Cancel")
+                .fetchSemanticsNodes().size == 1
+        }
+        composeTestRule.onNodeWithText("17").performClick()
+        composeTestRule.onNodeWithText("OK").performClick()
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutShowFab
+        ) {
+            composeTestRule.onAllNodesWithText(selectedDateString)
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clicar na hora do evento para abrir o diálogo
+        composeTestRule.onNodeWithTag("Hora do Evento").performClick()
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutShowFab
+        ) {
+            composeTestRule.onAllNodesWithText("Cancel")
+                .fetchSemanticsNodes().size == 1
+        }
+        composeTestRule.onNodeWithText("4").performClick()
+        composeTestRule.onNodeWithText("5").performClick()
+        composeTestRule.onNodeWithText("2").performClick()
+        composeTestRule.onNodeWithText("OK").performClick()
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutShowFab
+        ) {
+            composeTestRule.onAllNodesWithText(selectedTimeString)
+                .fetchSemanticsNodes().size == 1
+        }
 
         composeTestRule.waitUntil(
             timeoutMillis = timeOutShowFab
@@ -135,11 +177,11 @@ class MainActivityTest {
         composeTestRule
             .onAllNodesWithText("Novo Evento Teste").assertCountEquals(2)
         composeTestRule
-            .onAllNodesWithText("01/01/2023").assertCountEquals(1)
+            .onAllNodesWithText(selectedDateString).assertCountEquals(1)
         composeTestRule
-            .onAllNodesWithText("20:00").assertCountEquals(1)
+            .onAllNodesWithText(selectedTimeString).assertCountEquals(1)
         composeTestRule
-            .onAllNodesWithText("01/01/2023 - 20:00").assertCountEquals(1)
+            .onAllNodesWithText("$selectedDateString - $selectedTimeString").assertCountEquals(1)
         composeTestRule
             .onAllNodesWithText("Rua de cima").assertCountEquals(2)
 
@@ -162,6 +204,16 @@ class MainActivityTest {
 
     fun addTwoRegisteredEventsToDB() {
         MockDb.addTwoRegisteredEventsToDB()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatDate(date: LocalDate): String {
+        return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(date)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatTime(time: LocalTime): String {
+        return DateTimeFormatter.ofPattern("hh:mm").format(time)
     }
 
 }

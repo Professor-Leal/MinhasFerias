@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 class DateTimeAdapterImplTest{
 
-    val dateTimeAdapter= DateTimeAdapterImpl()
+    val dateTimeAdapter = DateTimeAdapterImpl()
 
     @Test
     fun toDateTimeStrings(){

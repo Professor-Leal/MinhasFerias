@@ -19,8 +19,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.com.rafaelleal.minhasferias.app.ui.theme.MinhasFériasTheme
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.NavRoutes
-import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateSingleTopTo
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToAddNewEvent
+import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToHome
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListScreen
 import br.com.rafaelleal.minhasferias.presentation_registered_events.single.AddRegisteredEventScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,17 +37,11 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    App(navController = navController)
+                    AppNavHost(navController = navController)
                 }
             }
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun App(navController: NavHostController) {
-    AppNavHost(navController)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -64,40 +58,16 @@ fun AppNavHost(navController: NavHostController) {
         ) {
             AddRegisteredEventScreen(
                 hiltViewModel()
-            ) { navController.navigateSingleTopTo(NavRoutes.Events.route) }
+            ) { navController.navigateToHome() }
         }
     }
-
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
 fun AppNavHostPreview() {
     AppNavHost(rememberNavController())
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun AppPreview() {
-    App(rememberNavController())
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MinhasFériasTheme {
-        Greeting("Android")
-    }
 }
 
 

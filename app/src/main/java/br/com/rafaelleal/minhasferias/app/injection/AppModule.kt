@@ -15,3 +15,4 @@ class AppModule {
     @Provides
     fun provideUseCaseConfiguration() = UseCase.Configuration(Dispatchers.IO)
 }
+

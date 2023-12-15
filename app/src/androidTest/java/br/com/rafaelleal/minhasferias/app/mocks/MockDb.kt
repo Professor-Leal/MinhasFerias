@@ -23,7 +23,6 @@ class MockDb {
             registeredEventList = mutableListOf<RegisteredEvent>()
         }
 
-
         fun addTwoRegisteredEventsToDB() {
             registeredEventList = mutableListOf<RegisteredEvent>(
                 RegisteredEvent(

@@ -33,8 +33,14 @@ sealed class NavRoutes(
     }
 }
 
-fun NavHostController.navigateSingleTopTo(route: String) =
-    this.navigate(route) { launchSingleTop = true }
+
+fun NavHostController.navigateToHome() =
+    this.navigate(NavRoutes.Events.route) {
+        popUpTo(NavRoutes.Events.route)
+        launchSingleTop = true
+    }
 
 fun NavHostController.navigateToAddNewEvent()  =
     this.navigate(NavRoutes.AddNewEvent.route)
+
+
