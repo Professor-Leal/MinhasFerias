@@ -26,29 +26,20 @@ import java.util.Locale
 
 @HiltAndroidTest
 class MainActivityTest {
-
     @get:Rule(order = 0)
     var hiltAndroidRule = HiltAndroidRule(this)
-
     @get:Rule(order = 1)
     var composeTestRule = createAndroidComposeRule(MainActivity::class.java)
-
     @Before
-    fun setUp() {
-        hiltAndroidRule.inject()
-    }
-
+    fun setUp() { hiltAndroidRule.inject() }
     @After
-    fun tearDown() {
-        MockDb.clearAll()
-    }
-
-    val timeOutShowFab = 5000L
+    fun tearDown() { MockDb.clearAll() }
+    val timeOutToShowScreenView = 5000L
 
     @Test
     fun onResume_shouldShowBannerAndFab() {
         composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
+            timeoutMillis = timeOutToShowScreenView
         ) {
             composeTestRule.onAllNodesWithTag("fab_add_new_event")
                 .fetchSemanticsNodes().size == 1
@@ -64,7 +55,7 @@ class MainActivityTest {
     fun onResume_shouldShowListItemsAndFab() {
         addTwoRegisteredEventsToDB()
         composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
+            timeoutMillis = timeOutToShowScreenView
         ) {
             composeTestRule.onAllNodesWithTag("fab_add_new_event")
                 .fetchSemanticsNodes().size == 1
@@ -82,7 +73,7 @@ class MainActivityTest {
     @Test
     fun clickOnFab_shouldNavigateToAddNewRegisteredEvent() {
         composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
+            timeoutMillis = timeOutToShowScreenView
         ) {
             composeTestRule.onAllNodesWithTag("fab_add_new_event")
                 .fetchSemanticsNodes().size == 1
@@ -91,7 +82,7 @@ class MainActivityTest {
             .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
             .performClick()
         composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
+            timeoutMillis = timeOutToShowScreenView
         ) {
             composeTestRule.onAllNodesWithTag("AddRegisteredEventsListHeader")
                 .fetchSemanticsNodes().size == 1
@@ -101,58 +92,56 @@ class MainActivityTest {
     }
 
     @Test
-    fun shouldFillForm_whenWritingOnAddEventScreenAndSave() {
+    fun shouldFillForm_whenWritingOnAddEventScreen_andSave() {
 
+        // Variáveis auxiliares
         val monthInt = LocalDate.now().monthValue
         val yearInt = LocalDate.now().year
-        val selectedDateString = formatDate(LocalDate.of( yearInt, monthInt, 17 ) )
-        val selectedTimeString = formatTime(LocalTime.of(4, 52 ))
+        val selectedDateString = formatDate(LocalDate.of(yearInt, monthInt, 17))
+        val selectedTimeString = formatTime(LocalTime.of(4, 52))
 
+        // Espera o FAB aparecer e clica nele navegando para a tela de criar
         composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
+            timeoutMillis = timeOutToShowScreenView
         ) {
             composeTestRule.onAllNodesWithTag("fab_add_new_event")
                 .fetchSemanticsNodes().size == 1
         }
-//        Thread.sleep(2000)
+
         composeTestRule
             .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
             .performClick()
 
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
-        ) {
+        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
             composeTestRule.onAllNodesWithTag("Nome do Evento")
                 .fetchSemanticsNodes().size == 1
         }
 
+        // Preenche o formulário e verifica que o botão de salvar não aprarece até preencher
         composeTestRule.onNodeWithTag("SaveRegisteredEventButton").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("Nome do Evento").performTextInput("Novo Evento Teste")
+        composeTestRule.onNodeWithTag("Nome do Evento").performTextInput(
+            "Novo Evento Teste"
+        )
+
         composeTestRule.onNodeWithTag("SaveRegisteredEventButton").assertDoesNotExist()
         composeTestRule.onNodeWithTag("Endereço").performTextInput("Rua de cima")
 
-        // clicar no dia do evento para abrir o diálogo
+        // Clicar no dia do evento para abrir o diálogo
         composeTestRule.onNodeWithTag("Dia do Evento").performClick()
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
-        ) {
+        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
             composeTestRule.onAllNodesWithText("Cancel")
                 .fetchSemanticsNodes().size == 1
         }
         composeTestRule.onNodeWithText("17").performClick()
         composeTestRule.onNodeWithText("OK").performClick()
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
-        ) {
+        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
             composeTestRule.onAllNodesWithText(selectedDateString)
                 .fetchSemanticsNodes().size == 1
         }
 
-        // clicar na hora do evento para abrir o diálogo
+        // Clicar na hora do evento para abrir o diálogo
         composeTestRule.onNodeWithTag("Hora do Evento").performClick()
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
-        ) {
+        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
             composeTestRule.onAllNodesWithText("Cancel")
                 .fetchSemanticsNodes().size == 1
         }
@@ -160,48 +149,33 @@ class MainActivityTest {
         composeTestRule.onNodeWithText("5").performClick()
         composeTestRule.onNodeWithText("2").performClick()
         composeTestRule.onNodeWithText("OK").performClick()
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
-        ) {
+        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
             composeTestRule.onAllNodesWithText(selectedTimeString)
                 .fetchSemanticsNodes().size == 1
         }
 
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
-        ) {
-            composeTestRule.onAllNodesWithTag("SaveRegisteredEventButton")
-                .fetchSemanticsNodes().size == 1
-        }
-
-        composeTestRule
-            .onAllNodesWithText("Novo Evento Teste").assertCountEquals(2)
-        composeTestRule
-            .onAllNodesWithText(selectedDateString).assertCountEquals(1)
-        composeTestRule
-            .onAllNodesWithText(selectedTimeString).assertCountEquals(1)
-        composeTestRule
-            .onAllNodesWithText("$selectedDateString - $selectedTimeString").assertCountEquals(1)
-        composeTestRule
-            .onAllNodesWithText("Rua de cima").assertCountEquals(2)
-
-//        Thread.sleep(2000)
-
+        // Verifica se todos os campos estão preenchidos e clica em salvar
+        composeTestRule.onAllNodesWithText("Novo Evento Teste").assertCountEquals(2)
+        composeTestRule.onAllNodesWithText("Rua de cima").assertCountEquals(2)
+        composeTestRule.onAllNodesWithText(selectedDateString).assertCountEquals(1)
+        composeTestRule.onAllNodesWithText(selectedTimeString).assertCountEquals(1)
+        composeTestRule.onAllNodesWithText("$selectedDateString - $selectedTimeString")
+            .assertCountEquals(1)
         composeTestRule.onNodeWithTag("SaveRegisteredEventButton").performClick()
 
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutShowFab
-        ) {
+        // Volta para a tela inicial e verifica se o item foi criado
+        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
             composeTestRule.onAllNodesWithTag("fab_add_new_event")
                 .fetchSemanticsNodes().size == 1
         }
         composeTestRule.onNodeWithText("Novo Evento Teste", useUnmergedTree = true)
             .assertIsDisplayed()
 
-//        Thread.sleep(3000)
-
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Funções auxiliares:
     fun addTwoRegisteredEventsToDB() {
         MockDb.addTwoRegisteredEventsToDB()
     }

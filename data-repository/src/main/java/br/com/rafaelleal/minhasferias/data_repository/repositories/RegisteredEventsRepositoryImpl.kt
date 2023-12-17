@@ -14,4 +14,14 @@ class RegisteredEventsRepositoryImpl @Inject constructor(
 
     override fun saveRegisteredEvent(registeredEvent: RegisteredEvent)
     = registeredEventsLocalDataSource.saveRegisteredEvent(registeredEvent)
+
+    override fun getRegisteredEvent(id: Long): Flow<RegisteredEvent>
+            = registeredEventsLocalDataSource.getRegisteredEvent(id)
+
+    override fun updateRegisteredEvent(registeredEvent: RegisteredEvent): Flow<Boolean>
+            = registeredEventsLocalDataSource.updateRegisteredEvent(registeredEvent)
+
+    override fun deleteRegisteredEvent(id: Long): Flow<Boolean>
+            = registeredEventsLocalDataSource.deleteRegisteredEvent(id)
+
 }

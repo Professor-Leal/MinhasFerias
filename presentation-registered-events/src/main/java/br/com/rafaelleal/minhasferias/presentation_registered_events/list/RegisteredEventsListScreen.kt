@@ -62,6 +62,7 @@ import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue10
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue90
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Navy
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Orange30
+import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Orange80
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.White
 import br.com.rafaelleal.minhasferias.presentation_registered_events.R
 import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventListItemModel
@@ -270,7 +271,7 @@ fun RegisteredEventsListItemPreview() {
 fun AddEventsBanner() {
     Box(
         modifier = Modifier
-            .background(Orange30)
+            .background(Orange80)
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
@@ -280,7 +281,7 @@ fun AddEventsBanner() {
             fontSize = 36.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            color = White
+            color = Navy
         )
     }
 }

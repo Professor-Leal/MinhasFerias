@@ -14,5 +14,15 @@ class MockRegisteredEventsLocalDataSource @Inject constructor() : RegisteredEven
     override fun saveRegisteredEvent(registeredEvent: RegisteredEvent) {
         MockDb.addRegisteredEvent(registeredEvent)
     }
+
+    override fun getRegisteredEvent(id: Long): Flow<RegisteredEvent> =
+        MockDb.getRegisteredEvent(id)
+
+    override fun updateRegisteredEvent(registeredEvent: RegisteredEvent): Flow<Boolean>
+    = MockDb.updateRegisteredEvent(registeredEvent)
+
+    override fun deleteRegisteredEvent(id: Long): Flow<Boolean>
+            = MockDb.deleteRegisteredEvent(id)
+
 }
 
