@@ -20,9 +20,11 @@ import androidx.navigation.compose.rememberNavController
 import br.com.rafaelleal.minhasferias.app.ui.theme.MinhasFériasTheme
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.NavRoutes
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToAddNewEvent
+import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToEditEvent
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToHome
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListScreen
 import br.com.rafaelleal.minhasferias.presentation_registered_events.single.AddRegisteredEventScreen
+import br.com.rafaelleal.minhasferias.presentation_registered_events.single.EditRegisteredEventScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -50,13 +52,23 @@ fun AppNavHost(navController: NavHostController) {
     NavHost(navController, startDestination = NavRoutes.Events.route) {
         composable(route = NavRoutes.Events.route) {
             RegisteredEventsListScreen(
-                hiltViewModel()
+                hiltViewModel(),
+                navController
             ) { navController.navigateToAddNewEvent() }
         }
         composable(
             route = NavRoutes.AddNewEvent.route,
         ) {
             AddRegisteredEventScreen(
+                hiltViewModel()
+            ) { navController.navigateToHome() }
+        }
+        composable(
+            route = NavRoutes.Event.route,
+            arguments = NavRoutes.Event.arguments
+        ) {
+            EditRegisteredEventScreen(
+                NavRoutes.Event.fromEntry(it),
                 hiltViewModel()
             ) { navController.navigateToHome() }
         }

@@ -4,4 +4,6 @@
     <string name="add_events_on_fab_click">Adicione eventos clicando em (+)</string>
     <string name="add_new_event_title">Adicione um Novo Evento</string>
     <string name="save">Salvar</string>
+    <string name="update">Atualizar</string>
+
 </resources>

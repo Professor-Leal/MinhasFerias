@@ -127,7 +127,6 @@ class RegisteredEventsLocalDataSourceImplTest {
         verify(dao).updateRegisteredEvent(itemEntity)
     }
 
-
     @ExperimentalCoroutinesApi
     @Test
     fun updateRegisteredEventFail(): Unit = runBlocking {

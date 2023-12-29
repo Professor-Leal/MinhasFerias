@@ -3,12 +3,11 @@ package br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels
 import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
 import br.com.rafaelleal.minhasferias.domain.sealed.Result
 import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.GetAllRegisteredEventsUseCase
+import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.SaveRegisteredEventUseCase
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.UiState
 import br.com.rafaelleal.minhasferias.presentation_registered_events.converters.GetAllRegisteredEventsUiConverter
 import br.com.rafaelleal.minhasferias.presentation_registered_events.converters.SaveRegisteredEventUiConverter
 import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventsListModel
-import br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels.RegisteredEventsListViewModel
-import br.com.rafaelleal.minhasferias.usecase.registeredEvents.SaveRegisteredEventUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf

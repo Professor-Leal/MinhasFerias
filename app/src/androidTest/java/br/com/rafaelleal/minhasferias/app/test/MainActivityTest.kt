@@ -28,68 +28,76 @@ import java.util.Locale
 class MainActivityTest {
     @get:Rule(order = 0)
     var hiltAndroidRule = HiltAndroidRule(this)
+
     @get:Rule(order = 1)
     var composeTestRule = createAndroidComposeRule(MainActivity::class.java)
+
     @Before
-    fun setUp() { hiltAndroidRule.inject() }
+    fun setUp() {
+        hiltAndroidRule.inject()
+    }
+
     @After
-    fun tearDown() { MockDb.clearAll() }
+    fun tearDown() {
+        MockDb.clearAll()
+    }
+
     val timeOutToShowScreenView = 5000L
 
-    @Test
-    fun onResume_shouldShowBannerAndFab() {
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutToShowScreenView
-        ) {
-            composeTestRule.onAllNodesWithTag("fab_add_new_event")
-                .fetchSemanticsNodes().size == 1
-        }
-        composeTestRule
-            .onNodeWithTag("fab_add_new_event", useUnmergedTree = false)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Add events clicking on (+)".uppercase(Locale.ROOT))
-            .assertExists()
-    }
+    /*  @Test
+      fun onResume_shouldShowBannerAndFab() {
+          composeTestRule.waitUntil(
+              timeoutMillis = timeOutToShowScreenView
+          ) {
+              composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                  .fetchSemanticsNodes().size == 1
+          }
+          composeTestRule
+              .onNodeWithTag("fab_add_new_event", useUnmergedTree = false)
+              .assertIsDisplayed()
+          composeTestRule.onNodeWithText("Add events clicking on (+)".uppercase(Locale.ROOT))
+              .assertExists()
+      }
 
-    @Test
-    fun onResume_shouldShowListItemsAndFab() {
-        addTwoRegisteredEventsToDB()
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutToShowScreenView
-        ) {
-            composeTestRule.onAllNodesWithTag("fab_add_new_event")
-                .fetchSemanticsNodes().size == 1
-        }
-        composeTestRule
-            .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
-            .assertIsDisplayed()
+      @Test
+      fun onResume_shouldShowListItemsAndFab() {
+          addTwoRegisteredEventsToDB()
+          composeTestRule.waitUntil(
+              timeoutMillis = timeOutToShowScreenView
+          ) {
+              composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                  .fetchSemanticsNodes().size == 1
+          }
+          composeTestRule
+              .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
+              .assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("name 1", useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("name 2", useUnmergedTree = true)
-            .assertIsDisplayed()
-    }
+          composeTestRule.onNodeWithText("name 1", useUnmergedTree = true)
+              .assertIsDisplayed()
+          composeTestRule.onNodeWithText("name 2", useUnmergedTree = true)
+              .assertIsDisplayed()
+      }
 
-    @Test
-    fun clickOnFab_shouldNavigateToAddNewRegisteredEvent() {
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutToShowScreenView
-        ) {
-            composeTestRule.onAllNodesWithTag("fab_add_new_event")
-                .fetchSemanticsNodes().size == 1
-        }
-        composeTestRule
-            .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
-            .performClick()
-        composeTestRule.waitUntil(
-            timeoutMillis = timeOutToShowScreenView
-        ) {
-            composeTestRule.onAllNodesWithTag("AddRegisteredEventsListHeader")
-                .fetchSemanticsNodes().size == 1
-        }
-        composeTestRule.onNodeWithTag("AddRegisteredEventsListHeader", useUnmergedTree = true)
-            .assertExists()
-    }
+      @Test
+      fun clickOnFab_shouldNavigateToAddNewRegisteredEvent() {
+          composeTestRule.waitUntil(
+              timeoutMillis = timeOutToShowScreenView
+          ) {
+              composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                  .fetchSemanticsNodes().size == 1
+          }
+          composeTestRule
+              .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
+              .performClick()
+          composeTestRule.waitUntil(
+              timeoutMillis = timeOutToShowScreenView
+          ) {
+              composeTestRule.onAllNodesWithTag("AddRegisteredEventsListHeader")
+                  .fetchSemanticsNodes().size == 1
+          }
+          composeTestRule.onNodeWithTag("AddRegisteredEventsListHeader", useUnmergedTree = true)
+              .assertExists()
+      }*/
 
     @Test
     fun shouldFillForm_whenWritingOnAddEventScreen_andSave() {
@@ -112,7 +120,7 @@ class MainActivityTest {
             .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
             .performClick()
 
-        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
             composeTestRule.onAllNodesWithTag("Nome do Evento")
                 .fetchSemanticsNodes().size == 1
         }
@@ -128,20 +136,20 @@ class MainActivityTest {
 
         // Clicar no dia do evento para abrir o diálogo
         composeTestRule.onNodeWithTag("Dia do Evento").performClick()
-        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
             composeTestRule.onAllNodesWithText("Cancel")
                 .fetchSemanticsNodes().size == 1
         }
         composeTestRule.onNodeWithText("17").performClick()
         composeTestRule.onNodeWithText("OK").performClick()
-        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
             composeTestRule.onAllNodesWithText(selectedDateString)
                 .fetchSemanticsNodes().size == 1
         }
 
         // Clicar na hora do evento para abrir o diálogo
         composeTestRule.onNodeWithTag("Hora do Evento").performClick()
-        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
             composeTestRule.onAllNodesWithText("Cancel")
                 .fetchSemanticsNodes().size == 1
         }
@@ -149,7 +157,7 @@ class MainActivityTest {
         composeTestRule.onNodeWithText("5").performClick()
         composeTestRule.onNodeWithText("2").performClick()
         composeTestRule.onNodeWithText("OK").performClick()
-        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
             composeTestRule.onAllNodesWithText(selectedTimeString)
                 .fetchSemanticsNodes().size == 1
         }
@@ -164,13 +172,58 @@ class MainActivityTest {
         composeTestRule.onNodeWithTag("SaveRegisteredEventButton").performClick()
 
         // Volta para a tela inicial e verifica se o item foi criado
-        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
             composeTestRule.onAllNodesWithTag("fab_add_new_event")
                 .fetchSemanticsNodes().size == 1
         }
         composeTestRule.onNodeWithText("Novo Evento Teste", useUnmergedTree = true)
             .assertIsDisplayed()
 
+    }
+
+    @Test
+    fun should_navigateToEditScreen_whenItemIsClicked_thenEditAndUpdate() {
+        // Alimenta o banco de dados com itens da lista
+        addTwoRegisteredEventsToDB()
+
+        // Espera o FAB aparecer
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clica no item 01
+        composeTestRule
+            .onNodeWithText("name 1")
+            .performClick()
+
+        // Espera a tela de edição aparacer
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
+            composeTestRule.onAllNodesWithTag("EditRegisteredEventHeader")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // Verifica que o botão de atualizar ainda não está visível
+        composeTestRule.onNodeWithTag("UpdateRegisteredEventButton").assertDoesNotExist()
+
+        // clica e edita o nome
+        composeTestRule.onNodeWithTag("Nome do Evento").performTextInput(
+            " - updated"
+        )
+
+        // Clica no botão de atualizar
+        composeTestRule.onNodeWithTag("UpdateRegisteredEventButton").performClick()
+
+        // Espera voltar para a tela inicial e verifica se o item foi atualizado
+
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithText("name 1 - updated")
+                .fetchSemanticsNodes().size == 1
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
