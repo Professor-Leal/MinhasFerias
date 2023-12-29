@@ -1,13 +1,11 @@
 package br.com.rafaelleal.minhasferias.presentation_registered_events.single
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -146,8 +144,10 @@ fun FormAddRegisteredEventScreen(
     }
 
     val closeDateSelection: UseCaseState.() -> Unit = { updateButtonVisibility() }
-    val calendarState =  rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
-    val clockState =  rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
+    val calendarState =
+        rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
+    val clockState =
+        rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
 
 
     CalendarDialog(
@@ -164,7 +164,7 @@ fun FormAddRegisteredEventScreen(
     ClockDialog(
         clockState,
         selection = ClockSelection.HoursMinutes { hours, minutes ->
-            time = formatTime(LocalTime.of(hours, minutes, 0) )
+            time = formatTime(LocalTime.of(hours, minutes, 0))
         },
         config = ClockConfig(
             defaultTime = LocalTime.NOON,

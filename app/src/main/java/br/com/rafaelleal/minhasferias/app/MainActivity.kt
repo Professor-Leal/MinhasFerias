@@ -23,6 +23,7 @@ import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToAddNe
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToHome
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListScreen
 import br.com.rafaelleal.minhasferias.presentation_registered_events.single.AddRegisteredEventScreen
+import br.com.rafaelleal.minhasferias.presentation_registered_events.single.EditRegisteredEventScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -60,6 +61,16 @@ fun AppNavHost(navController: NavHostController) {
                 hiltViewModel()
             ) { navController.navigateToHome() }
         }
+//        composable(
+//            route = NavRoutes.Event.route,
+//            arguments = NavRoutes.Event.arguments
+//        ) {
+//            EditRegisteredEventScreen(
+//                NavRoutes.Event.fromEntry(it),
+//                hiltViewModel()
+//            ) { navController.navigateToHome() }
+//        }
+
     }
 }
 

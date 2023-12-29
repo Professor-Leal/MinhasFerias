@@ -3,9 +3,9 @@ package br.com.rafaelleal.minhasferias.presentation_registered_events.converters
 import android.content.Context
 import br.com.rafaelleal.minhasferias.presentation_common.converters.CommonResultConverter
 import br.com.rafaelleal.minhasferias.presentation_registered_events.R
-import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventListItemModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventsListModel
 import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.GetAllRegisteredEventsUseCase
+import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventListItemModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

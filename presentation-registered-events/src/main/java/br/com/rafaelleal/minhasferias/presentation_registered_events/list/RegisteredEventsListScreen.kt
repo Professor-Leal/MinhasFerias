@@ -2,11 +2,8 @@ package br.com.rafaelleal.minhasferias.presentation_registered_events.list
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -16,7 +13,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,12 +37,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,21 +49,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
 import br.com.rafaelleal.minhasferias.presentation_common.screens.CommonScreen
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.UiState
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Black
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue10
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue90
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Navy
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Orange30
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Orange80
-import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.White
 import br.com.rafaelleal.minhasferias.presentation_registered_events.R
 import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventListItemModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventsListModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels.RegisteredEventsListViewModel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -103,7 +94,8 @@ internal val listModelEmptyMock = RegisteredEventsListModel("Título Preview", l
 @Composable
 fun RegisteredEventsListScreen(
     viewModel: RegisteredEventsListViewModel,
-    onClickAddNewRegisteredEvent: () -> Unit = {}
+    onClickAddNewRegisteredEvent: () -> Unit = {},
+    onItemClick: (id: Long) -> Unit = {}
 ) {
     var uiState: UiState<RegisteredEventsListModel> by remember {
         mutableStateOf(UiState.Loading)
@@ -115,7 +107,7 @@ fun RegisteredEventsListScreen(
         uiState = state
     }
     CommonScreen(state = uiState) {
-        ScaffoldBody(it, onClickAddNewRegisteredEvent)
+        ScaffoldBody(it, onClickAddNewRegisteredEvent, onItemClick)
         HomeBackHandler()
     }
 }
@@ -123,7 +115,7 @@ fun RegisteredEventsListScreen(
 @Composable
 fun HomeBackHandler() {
     val activity = (LocalContext.current as? Activity)
-    var pressedTime by remember { mutableStateOf(0L)}
+    var pressedTime by remember { mutableStateOf(0L) }
 
     BackHandler(enabled = true, onBack = {
         if (pressedTime + 2000 > System.currentTimeMillis()) {
@@ -139,26 +131,32 @@ fun HomeBackHandler() {
 @Composable
 fun ScaffoldBody(
     registeredEventListModel: RegisteredEventsListModel,
-    onClickAddNewRegisteredEvent: () -> Unit = {}
+    onClickAddNewRegisteredEvent: () -> Unit = {},
+    onItemClick: (id: Long) -> Unit = {}
 ) {
     var shown by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    Scaffold( modifier = Modifier
+    Scaffold(modifier = Modifier
         .testTag("RegisteredEventsListScreen"),
-        floatingActionButton = { AnimatedVisibility( visible = shown,
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = shown,
                 enter = slideIn(tween(600, easing = LinearOutSlowInEasing)) { fullSize ->
                     IntOffset(fullSize.width / 4, fullSize.width / 4)
                 }
-                        + fadeIn( initialAlpha = 0.3f ),
+                        + fadeIn(initialAlpha = 0.3f),
                 exit = slideOut(tween(600, easing = FastOutSlowInEasing)) { fullSize ->
-                     IntOffset(fullSize.width / 4, fullSize.width / 4)
+                    IntOffset(fullSize.width / 4, fullSize.width / 4)
                 }
                         + fadeOut(),
             ) {
-                FloatingActionButton( modifier = Modifier
-                    .padding(all = 16.dp)
-                    .testTag("fab_add_new_event"),
-                    onClick = { coroutineScope.launch {shown = false
+                FloatingActionButton(
+                    modifier = Modifier
+                        .padding(all = 16.dp)
+                        .testTag("fab_add_new_event"),
+                    onClick = {
+                        coroutineScope.launch {
+                            shown = false
                             delay(300L)
                             onClickAddNewRegisteredEvent()
                         }
@@ -169,7 +167,7 @@ fun ScaffoldBody(
             }
         }
     ) {
-        RegisteredEventsList(registeredEventListModel)
+        RegisteredEventsList(registeredEventListModel, onItemClick)
         LaunchedEffect(true) {
             delay(100L)
             shown = true
@@ -191,17 +189,18 @@ fun ScaffoldBodyEmptyListPreview() {
 
 @Composable
 fun RegisteredEventsList(
-    registeredEventsListModel: RegisteredEventsListModel
+    registeredEventsListModel: RegisteredEventsListModel,
+    onItemClick: (id: Long) -> Unit = {}
 ) {
     if (registeredEventsListModel.items.isEmpty()) {
         AddEventsBanner()
     } else {
-        LazyColumn( modifier = Modifier.padding(16.dp) ) {
+        LazyColumn(modifier = Modifier.padding(16.dp)) {
             item(registeredEventsListModel.headerText) {
                 RegisteredEventsListHeader(registeredEventsListModel.headerText)
             }
-            items( registeredEventsListModel.items ) { item ->
-                RegisteredEventsListItem(item)
+            items(registeredEventsListModel.items) { item ->
+                RegisteredEventsListItem(item, onItemClick)
             }
         }
     }
@@ -224,7 +223,8 @@ fun RegisteredEventsListHeader(
             .fillMaxWidth()
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(text = title, fontSize = 24.sp, textAlign = TextAlign.Center,
+        Text(
+            text = title, fontSize = 24.sp, textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold, color = Navy
         )
     }
@@ -239,24 +239,37 @@ fun RegisteredEventsListHeaderPreview() {
 
 @Composable
 fun RegisteredEventsListItem(
-    item: RegisteredEventListItemModel
+    item: RegisteredEventListItemModel,
+    onItemClick: (id: Long) -> Unit = {}
+
 ) {
-    Card( elevation = 8.dp, modifier = Modifier
+    Card(elevation = 8.dp, modifier = Modifier
         .padding(8.dp)
         .fillMaxWidth()
         .testTag("RegisteredEventsListItem")
+        .clickable {
+            onItemClick(item.id)
+        }
     ) {
-        Column( modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Blue90) ) {
-            Text( modifier = Modifier.padding(8.dp), text = item.name, fontSize = 18.sp,
-                fontWeight = FontWeight.Bold, color = Navy )
-            Text( modifier = Modifier.padding(horizontal = 12.dp), text = item.address,
-                fontSize = 14.sp, color = Black )
-            Text( modifier = Modifier
-                .align(Alignment.End)
-                .padding(8.dp), text = item.dayTime,
-                textAlign = TextAlign.End, fontSize = 14.sp, color = Blue10)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Blue90)
+        ) {
+            Text(
+                modifier = Modifier.padding(8.dp), text = item.name, fontSize = 18.sp,
+                fontWeight = FontWeight.Bold, color = Navy
+            )
+            Text(
+                modifier = Modifier.padding(horizontal = 12.dp), text = item.address,
+                fontSize = 14.sp, color = Black
+            )
+            Text(
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(8.dp), text = item.dayTime,
+                textAlign = TextAlign.End, fontSize = 14.sp, color = Blue10
+            )
         }
     }
 }

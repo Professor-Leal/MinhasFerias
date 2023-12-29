@@ -168,8 +168,37 @@ class MainActivityTest {
             composeTestRule.onAllNodesWithTag("fab_add_new_event")
                 .fetchSemanticsNodes().size == 1
         }
+        Thread.sleep(1000)
         composeTestRule.onNodeWithText("Novo Evento Teste", useUnmergedTree = true)
             .assertIsDisplayed()
+
+    }
+
+    @Test
+    fun should_navigateToEditScreen_whenItemIsClicked(){
+        // Alimenta o banco de dados com itens da lista
+        MockDb.addTwoRegisteredEventsToDB()
+
+        // Espera o FAB aparecer e clica nele navegando para a tela de criar
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clica no item 01
+        composeTestRule
+            .onNodeWithText("name 1")
+            .performClick()
+
+        // Espera a tela de edição aparacer
+        composeTestRule.waitUntil( timeoutMillis = timeOutToShowScreenView ) {
+            composeTestRule.onAllNodesWithTag("Edit the Event")
+                .fetchSemanticsNodes().size == 1
+        }
+
+
 
     }
 
