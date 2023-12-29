@@ -43,4 +43,7 @@ fun NavHostController.navigateToHome() =
 fun NavHostController.navigateToAddNewEvent()  =
     this.navigate(NavRoutes.AddNewEvent.route)
 
+fun NavHostController.navigateToEditEvent(id: Long) =
+    this.navigate(NavRoutes.Event.routeForEvent(id))
+
 

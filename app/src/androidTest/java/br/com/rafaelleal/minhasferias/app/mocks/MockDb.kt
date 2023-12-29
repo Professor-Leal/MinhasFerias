@@ -30,15 +30,15 @@ class MockDb {
                 RegisteredEvent(
                     name = "name 1",
                     address = "address 1",
-                    time = "time",
-                    day = "day",
+                    time = "12:05",
+                    day = "01/02/2023",
                     id = 1L
                 ),
                 RegisteredEvent(
                     name = "name 2",
                     address = "address 2",
-                    time = "time 2 ",
-                    day = "day 2 ",
+                    time = "12:37",
+                    day = "01/02/2023 ",
                     id = 2L
                 )
             )
@@ -61,6 +61,7 @@ class MockDb {
             } else {
                 actualList.remove(filteredList.get(0))
                 actualList.add(registeredEvent)
+                _resgisteredEventsListFlow.value = actualList.sortedBy { it.id }
                 emit(true)
             }
         }
