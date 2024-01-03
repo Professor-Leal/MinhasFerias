@@ -2,6 +2,7 @@ package br.com.rafaelleal.minhasferias.app.test
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -13,6 +14,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import br.com.rafaelleal.minhasferias.app.MainActivity
 import br.com.rafaelleal.minhasferias.app.mocks.MockDb
+import br.com.rafaelleal.minhasferias.presentation_registered_events.R
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.After
@@ -217,7 +219,6 @@ class MainActivityTest {
         composeTestRule.onNodeWithTag("UpdateRegisteredEventButton").performClick()
 
         // Espera voltar para a tela inicial e verifica se o item foi atualizado
-
         composeTestRule.waitUntil(
             timeoutMillis = timeOutToShowScreenView
         ) {
@@ -225,6 +226,59 @@ class MainActivityTest {
                 .fetchSemanticsNodes().size == 1
         }
     }
+
+   @Test
+    fun should_navigateToEditScreen_whenItemIsClicked_thenDeleteItem() {
+        // Alimenta o banco de dados com itens da lista
+        addTwoRegisteredEventsToDB()
+
+        // Espera o FAB aparecer
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clica no item 01
+        composeTestRule
+            .onNodeWithText("name 1")
+            .performClick()
+
+        // Espera a tela de edição aparacer
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
+            composeTestRule.onAllNodesWithTag("EditRegisteredEventHeader")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clica e edita o nome
+        composeTestRule.onNodeWithTag("DeleteIcon").performClick()
+
+        // Espera aparecer o diálogo de confirmação
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithText("Yes")
+                .fetchSemanticsNodes().size == 1
+        }
+
+       // Clica no botão de sim
+       composeTestRule.onNodeWithText("Yes").performClick()
+
+       // volta para a tela inicial
+       composeTestRule.waitUntil(
+           timeoutMillis = timeOutToShowScreenView
+       ) {
+           composeTestRule.onAllNodesWithTag("fab_add_new_event")
+               .fetchSemanticsNodes().size == 1
+       }
+
+        // Verifica que o item 1 foi apagado
+       composeTestRule.onNodeWithText("name 1").assertDoesNotExist()
+
+
+
+   }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////

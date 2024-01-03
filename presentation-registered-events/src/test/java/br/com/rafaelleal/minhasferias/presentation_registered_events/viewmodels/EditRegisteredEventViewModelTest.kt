@@ -2,9 +2,11 @@ package br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels
 
 import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
 import br.com.rafaelleal.minhasferias.domain.sealed.Result
+import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.DeleteRegisteredEventUseCase
 import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.GetRegisteredEventUseCase
 import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.UpdateRegisteredEventUseCase
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.UiState
+import br.com.rafaelleal.minhasferias.presentation_registered_events.converters.DeleteRegisteredEventUiConverter
 import br.com.rafaelleal.minhasferias.presentation_registered_events.converters.GetRegisteredEventUiConverter
 import br.com.rafaelleal.minhasferias.presentation_registered_events.converters.UpdateRegisteredEventUiConverter
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +32,9 @@ class EditRegisteredEventViewModelTest {
     private val updateRegisteredEventUseCase by lazy { mock<UpdateRegisteredEventUseCase>() }
     private val updateRegisteredEventUiConverter by lazy { mock<UpdateRegisteredEventUiConverter>() }
 
+    private val deleteRegisteredEventUseCase by lazy { mock<DeleteRegisteredEventUseCase>() }
+    private val deleteRegisteredEventUiConverter by lazy { mock<DeleteRegisteredEventUiConverter>() }
+
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
@@ -45,7 +50,9 @@ class EditRegisteredEventViewModelTest {
             getRegisteredEventUseCase,
             getRegisteredEventUiConverter,
             updateRegisteredEventUseCase,
-            updateRegisteredEventUiConverter
+            updateRegisteredEventUiConverter,
+            deleteRegisteredEventUseCase,
+            deleteRegisteredEventUiConverter
         )
     }
 
@@ -72,7 +79,7 @@ class EditRegisteredEventViewModelTest {
     }
 
     @Test
-    fun `should update registered event when asked`(): Unit = runBlocking{
+    fun `should update registered event when asked`(): Unit = runBlocking {
         assertEquals(UiState.Loading, viewModel.updateRegisteredEventFlow.value)
         val usecaseResponse = mock<UpdateRegisteredEventUseCase.Response>()
         val usecaseResult = Result.Success(usecaseResponse)
@@ -89,6 +96,27 @@ class EditRegisteredEventViewModelTest {
 
         viewModel.updateRegisteredEvent(itemMock)
         assertEquals(uiState, viewModel.updateRegisteredEventFlow.value)
+
+    }
+
+    @Test
+    fun `should delete registered event when asked`(): Unit = runBlocking {
+        assertEquals(UiState.Loading, viewModel.updateRegisteredEventFlow.value)
+        val usecaseResponse = mock<DeleteRegisteredEventUseCase.Response>()
+        val usecaseResult = Result.Success(usecaseResponse)
+
+        val itemId = 1L
+        val uiState = UiState.Success(true)
+
+        whenever(
+            deleteRegisteredEventUseCase.execute(DeleteRegisteredEventUseCase.Request(itemId))
+        ).thenReturn(flowOf(usecaseResult))
+        whenever(
+            deleteRegisteredEventUiConverter.convert(usecaseResult)
+        ).thenReturn(uiState)
+
+        viewModel.deleteRegisteredEvent(itemId)
+        assertEquals(uiState, viewModel.deleteRegisteredEventFlow.value)
 
     }
 

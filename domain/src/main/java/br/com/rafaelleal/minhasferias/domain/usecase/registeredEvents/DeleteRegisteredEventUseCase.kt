@@ -1,6 +1,5 @@
 package br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents
 
-import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
 import br.com.rafaelleal.minhasferias.domain.repositories.RegisteredEventsRepository
 import br.com.rafaelleal.minhasferias.domain.usecase.UseCase
 import kotlinx.coroutines.flow.Flow

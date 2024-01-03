@@ -73,6 +73,7 @@ class MockDb {
                 emit(false)
             } else {
                 actualList.remove(filteredList.get(0))
+                _resgisteredEventsListFlow.value = actualList.sortedBy { it.id }
                 emit(true)
             }
         }
