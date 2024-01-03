@@ -1,16 +1,16 @@
 package br.com.rafaelleal.minhasferias.presentation_registered_events.converters
 
-import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.UpdateRegisteredEventUseCase
-import org.junit.Assert.assertEquals
+import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.DeleteRegisteredEventUseCase
+import org.junit.Assert.*
 import org.junit.Test
 
-class UpdateRegisteredEventUiConverterTest {
-    private val converter = UpdateRegisteredEventUiConverter()
+class DeleteRegisteredEventUiConverterTest {
+    private val converter = DeleteRegisteredEventUiConverter()
 
     @Test
     fun testConvertSuccess() {
         val itemMock = true
-        val response = UpdateRegisteredEventUseCase.Response(itemMock)
+        val response = DeleteRegisteredEventUseCase.Response(itemMock)
         val expectedResult = true
 
         val convertResult = converter.convertSuccess(response)

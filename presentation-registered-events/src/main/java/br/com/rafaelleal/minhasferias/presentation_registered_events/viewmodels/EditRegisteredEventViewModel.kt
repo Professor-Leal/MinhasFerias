@@ -3,15 +3,16 @@ package br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
+import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.DeleteRegisteredEventUseCase
 import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.GetRegisteredEventUseCase
 import br.com.rafaelleal.minhasferias.domain.usecase.registeredEvents.UpdateRegisteredEventUseCase
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.UiState
+import br.com.rafaelleal.minhasferias.presentation_registered_events.converters.DeleteRegisteredEventUiConverter
 import br.com.rafaelleal.minhasferias.presentation_registered_events.converters.GetRegisteredEventUiConverter
 import br.com.rafaelleal.minhasferias.presentation_registered_events.converters.UpdateRegisteredEventUiConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,13 +23,20 @@ class EditRegisteredEventViewModel @Inject constructor(
     private val getRegisteredEventUseCase: GetRegisteredEventUseCase,
     private val getRegisteredEventUiConverter: GetRegisteredEventUiConverter,
     private val updateRegisteredEventUseCase: UpdateRegisteredEventUseCase,
-    private val updateGetRegisteredEventUiConverter: UpdateRegisteredEventUiConverter
+    private val updateRegisteredEventUiConverter: UpdateRegisteredEventUiConverter,
+    private val deleteRegisteredEventUseCase: DeleteRegisteredEventUseCase,
+    private val deleteRegisteredEventUiConverter: DeleteRegisteredEventUiConverter
 ) : ViewModel() {
 
     val _updateRegisteredEventFlow =
         MutableStateFlow<UiState<Boolean>>(UiState.Loading)
     val updateRegisteredEventFlow: StateFlow<UiState<Boolean>> =
         _updateRegisteredEventFlow
+
+    val _deleteRegisteredEventFlow =
+        MutableStateFlow<UiState<Boolean>>(UiState.Loading)
+    val deleteRegisteredEventFlow: StateFlow<UiState<Boolean>> =
+        _deleteRegisteredEventFlow
 
     private val _resgisteredEventFlow =
         MutableStateFlow<UiState<RegisteredEvent>>(UiState.Loading)
@@ -57,10 +65,25 @@ class EditRegisteredEventViewModel @Inject constructor(
                 )
             )
                 .map {
-                    updateGetRegisteredEventUiConverter.convert(it)
+                    updateRegisteredEventUiConverter.convert(it)
                 }.collect {
                     _updateRegisteredEventFlow.value = it
                 }
+        }
+    }
+
+    fun deleteRegisteredEvent(id: Long) {
+        viewModelScope.launch {
+            _deleteRegisteredEventFlow.value = UiState.Loading
+            deleteRegisteredEventUseCase.execute(
+                DeleteRegisteredEventUseCase.Request(
+                    id
+                )
+            ).map {
+                deleteRegisteredEventUiConverter.convert(it)
+            }.collect {
+                _deleteRegisteredEventFlow.value = it
+            }
         }
     }
 

@@ -5,5 +5,8 @@
     <string name="add_new_event_title">Adicione um Novo Evento</string>
     <string name="save">Salvar</string>
     <string name="update">Atualizar</string>
+    <string name="no">Não</string>
+    <string name="yes">Sim</string>
+    <string name="sure_delete">Tem certeza que deseja remover esse item?</string>
 
 </resources>

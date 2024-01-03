@@ -6,16 +6,23 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,10 +33,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
@@ -41,6 +50,11 @@ import br.com.rafaelleal.minhasferias.presentation_registered_events.R
 import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListItem
 import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventListItemModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels.EditRegisteredEventViewModel
+import com.maxkeppeker.sheets.core.CoreDialog
+import com.maxkeppeker.sheets.core.models.CoreSelection
+import com.maxkeppeker.sheets.core.models.base.ButtonStyle
+import com.maxkeppeker.sheets.core.models.base.IconSource
+import com.maxkeppeker.sheets.core.models.base.SelectionButton
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -52,6 +66,7 @@ import com.maxkeppeler.sheets.clock.models.ClockConfig
 import com.maxkeppeler.sheets.clock.models.ClockSelection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 
@@ -62,7 +77,6 @@ fun EditRegisteredEventScreen(
     viewModel: EditRegisteredEventViewModel,
     backToMain: () -> Unit = {}
 ) {
-
     var uiStateBackToMain: UiState<Boolean> by remember {
         mutableStateOf(UiState.Loading)
     }
@@ -72,7 +86,15 @@ fun EditRegisteredEventScreen(
             is UiState.Success -> {
                 backToMain()
             }
-
+            else -> {}
+        }
+    }
+    viewModel.deleteRegisteredEventFlow.collectAsState().value.let { _state ->
+        uiStateBackToMain = _state
+        when (uiStateBackToMain) {
+            is UiState.Success -> {
+                backToMain()
+            }
             else -> {}
         }
     }
@@ -90,9 +112,12 @@ fun EditRegisteredEventScreen(
     val updateRegisteredEvent: (RegisteredEvent) -> Unit = {
         viewModel.updateRegisteredEvent(it)
     }
+    val deleteRegisteredEvent: (Long) -> Unit = {
+        viewModel.deleteRegisteredEvent(it)
+    }
 
     CommonScreen(state = uiState) {
-        FormEditRegisteredEventScreen(it, updateRegisteredEvent)
+        FormEditRegisteredEventScreen(it, updateRegisteredEvent, deleteRegisteredEvent)
     }
 }
 
@@ -102,7 +127,8 @@ fun EditRegisteredEventScreen(
 @Composable
 fun FormEditRegisteredEventScreen(
     item: RegisteredEvent,
-    updateRegisteredEvent: (input: RegisteredEvent) -> Unit = {}
+    updateRegisteredEvent: (input: RegisteredEvent) -> Unit = {},
+    deleteRegisteredEvent: (registeredEventId: Long) -> Unit = {}
 ) {
     val coroutineScope = rememberCoroutineScope()
     var itemId by remember { mutableStateOf(item.id) }
@@ -110,16 +136,19 @@ fun FormEditRegisteredEventScreen(
     var day by remember { mutableStateOf(item.day) }
     var time by remember { mutableStateOf(item.time) }
     var address by remember { mutableStateOf(item.address) }
-    var visible by remember { mutableStateOf(false) }
+    var updateButtonVisible by remember { mutableStateOf(false) }
 
     fun updateButtonVisibility() {
-        visible = name.length > 0 && day.length > 0 && time.length > 0 && address.length > 0
+        updateButtonVisible =
+            name.length > 0 && day.length > 0 && time.length > 0 && address.length > 0
     }
 
     val closeDateSelection: UseCaseState.() -> Unit = { updateButtonVisibility() }
     val calendarState =
         rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
     val clockState =
+        rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
+    val deleteState =
         rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
 
     CalendarDialog(
@@ -143,6 +172,33 @@ fun FormEditRegisteredEventScreen(
             is24HourFormat = true
         )
     )
+    CoreDialog(
+        state = deleteState,
+        selection = CoreSelection(
+            withButtonView = true,
+            negativeButton = SelectionButton(
+                stringResource(R.string.no),
+                type = ButtonStyle.OUTLINED
+            ),
+            positiveButton = SelectionButton(
+                stringResource(R.string.yes),
+                IconSource(Icons.Rounded.Delete),
+                ButtonStyle.OUTLINED
+            ),
+        ) {
+            deleteRegisteredEvent(itemId)
+        },
+        onPositiveValid = true,
+        body = {
+            Text(
+                text = stringResource(R.string.sure_delete),
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                color = Navy
+            )
+        },
+    )
 
     Column(
         modifier = Modifier
@@ -150,6 +206,23 @@ fun FormEditRegisteredEventScreen(
             .background(Blue90)
     ) {
         EditRegisteredEventHeader()
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                Icons.Default.Delete,
+                contentDescription = "delete button",
+                tint = Color.Red,
+                modifier = Modifier
+                    .size(24.dp)
+                    .testTag("DeleteIcon")
+                    .clickable { deleteState.show() }
+            )
+        }
         AddTextInput("Nome do Evento", name) {
             name = it
             updateButtonVisibility()
@@ -171,7 +244,7 @@ fun FormEditRegisteredEventScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            UpdateRegisteredEventButton(visible) {
+            UpdateRegisteredEventButton(updateButtonVisible) {
                 coroutineScope.launch(Dispatchers.IO) {
                     updateRegisteredEvent(getUpdateItem(itemId, name, day, time, address))
                 }
@@ -187,6 +260,23 @@ fun FormEditRegisteredEventScreen(
         )
     }
 }
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showSystemUi = true)
+@Composable
+fun FormEditRegisteredEventScreenPreview() {
+    FormEditRegisteredEventScreen(
+        RegisteredEvent(
+            name = "Nome do Evento",
+            address = "Endereço do evento",
+            time = "12:34",
+            day = "01/02/2023",
+            date = LocalDateTime.of(2023, 2, 1, 12, 34),
+            id = 1L
+        )
+    )
+}
+
 
 @Composable
 fun UpdateRegisteredEventButton(visible: Boolean, onClick: () -> Unit) {
