@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="friends_list_header">Amigos</string>
+    <string name="add_friends_on_fab_click">Adicione amigos clicando em (+)</string>
+    <string name="save">Salvar</string>
+    <string name="update">Atualizar</string>
+    <string name="no">Não</string>
+    <string name="yes">Sim</string>
+    <string name="sure_delete">Tem certeza que deseja remover esse item?</string>
+</resources>

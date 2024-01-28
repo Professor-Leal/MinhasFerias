@@ -44,11 +44,11 @@ dependencies {
     implementation(project(path: ":presentation-common"))
 
     // https://github.com/maxkeppeler/sheets-compose-dialogs?tab=readme-ov-file
-    implementation "com.maxkeppeler.sheets-compose-dialogs:core:1.2.0"
+    implementation dialog.core
     // CALENDAR
-    implementation "com.maxkeppeler.sheets-compose-dialogs:calendar:1.2.0"
+    implementation dialog.calendar
     // CLOCK
-    implementation "com.maxkeppeler.sheets-compose-dialogs:clock:1.2.0"
+    implementation dialog.clock
 
     implementation androidx.core
     implementation androidx.appCompat

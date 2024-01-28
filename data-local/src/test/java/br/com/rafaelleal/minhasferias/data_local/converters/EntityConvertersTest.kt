@@ -54,4 +54,6 @@ class EntityConvertersTest {
         assert( registeredEventEntity is RegisteredEventEntity )
 
     }
+
+
 }

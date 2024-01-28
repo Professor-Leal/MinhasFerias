@@ -56,6 +56,8 @@ buildscript {
                 androidTestJunit       : "1.1.3",
                 orchestrator           : "1.4.1",
 
+                dialog : "1.2.0",
+
                 jacocoTool             : "0.8.10"
 
         ]
@@ -137,6 +139,12 @@ buildscript {
                 moshiKotlin       : "com.squareup.moshi:moshi-kotlin:${versions.moshi}",
                 moshiKotlinCodegen: "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshiKotlinCodegen}"
         ]
+        dialog = [
+                core : "com.maxkeppeler.sheets-compose-dialogs:core:${versions.dialog}",
+                calendar: "com.maxkeppeler.sheets-compose-dialogs:calendar:${versions.dialog}",
+                clock: "com.maxkeppeler.sheets-compose-dialogs:clock:${versions.dialog}"
+        ]
+
         plugin_hilt_version = versions.hilt
         plugin_kotlin_version = versions.kotlinPlugin
         plugin_android_version = '8.0.2'
