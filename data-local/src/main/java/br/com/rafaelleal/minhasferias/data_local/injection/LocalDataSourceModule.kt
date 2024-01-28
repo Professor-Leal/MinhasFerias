@@ -1,6 +1,8 @@
 package br.com.rafaelleal.minhasferias.data_local.injection
 
+import br.com.rafaelleal.minhasferias.data_local.source.FriendsLocalDataSourceImpl
 import br.com.rafaelleal.minhasferias.data_local.source.RegisteredEventsLocalDataSourceImpl
+import br.com.rafaelleal.minhasferias.data_repository.data_source.local.FriendsLocalDataSource
 import br.com.rafaelleal.minhasferias.data_repository.data_source.local.RegisteredEventsLocalDataSource
 import dagger.Binds
 import dagger.Module
@@ -17,5 +19,11 @@ abstract class LocalDataSourceModule {
     abstract fun bindRegisteredEventsDataSource(
         localRegisteredEventsDataSourceImpl: RegisteredEventsLocalDataSourceImpl
     ): RegisteredEventsLocalDataSource
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindFriendsDataSource(
+        localFriendsDataSourceImpl: FriendsLocalDataSourceImpl
+    ): FriendsLocalDataSource
 
 }

@@ -1,9 +1,12 @@
 package br.com.rafaelleal.minhasferias.data_local.injection
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.room.Room
-import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.AppDatabase
-import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.MIGRATION_LIST
+import br.com.rafaelleal.minhasferias.data_local.db.AppDatabase
+import br.com.rafaelleal.minhasferias.data_local.db.MIGRATION_LIST
+import br.com.rafaelleal.minhasferias.data_local.db.friends.dao.FriendDao
 import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.dao.RegisteredEventDao
 import dagger.Module
 import dagger.Provides
@@ -19,6 +22,7 @@ internal const val DATABASE_NAME = "MINHAS_FERIAS_DATABASE"
 @InstallIn(ViewModelComponent::class)
 class PersistenceModule {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Provides
     @ViewModelScoped
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
@@ -29,8 +33,15 @@ class PersistenceModule {
             .addMigrations(*MIGRATION_LIST)
             .build()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Provides
     @ViewModelScoped
     fun provideRegisteredEventDao(appDatabase: AppDatabase): RegisteredEventDao =
         appDatabase.registeredEventDao()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Provides
+    @ViewModelScoped
+    fun provideFriendDao(appDatabase: AppDatabase): FriendDao =
+        appDatabase.friendDao()
 }

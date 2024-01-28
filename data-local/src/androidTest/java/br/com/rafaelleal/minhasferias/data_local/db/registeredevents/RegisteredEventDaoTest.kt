@@ -3,6 +3,7 @@ package br.com.rafaelleal.minhasferias.data_local.db.registeredevents
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import br.com.rafaelleal.minhasferias.data_local.db.AppDatabase
 import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.dao.RegisteredEventDao
 import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.entities.RegisteredEventEntity
 import com.google.common.truth.Truth.assertThat

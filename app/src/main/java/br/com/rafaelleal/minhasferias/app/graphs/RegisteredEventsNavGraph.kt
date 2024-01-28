@@ -20,11 +20,11 @@ const val GRAPH_ROUTE_EVENTS = "graph_events"
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.registeredEventsNavGraph(
     navController: NavHostController
-){
+) {
     navigation(
         route = GRAPH_ROUTE_EVENTS,
         startDestination = RegisteredEventsNavRoutes.Events.route
-    ){
+    ) {
         composable(route = RegisteredEventsNavRoutes.Events.route) {
             RegisteredEventsListScreen(
                 hiltViewModel(),

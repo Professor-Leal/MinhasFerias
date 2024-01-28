@@ -8,6 +8,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -46,61 +47,7 @@ class MainActivityTest {
 
     val timeOutToShowScreenView = 5000L
 
-    /*  @Test
-      fun onResume_shouldShowBannerAndFab() {
-          composeTestRule.waitUntil(
-              timeoutMillis = timeOutToShowScreenView
-          ) {
-              composeTestRule.onAllNodesWithTag("fab_add_new_event")
-                  .fetchSemanticsNodes().size == 1
-          }
-          composeTestRule
-              .onNodeWithTag("fab_add_new_event", useUnmergedTree = false)
-              .assertIsDisplayed()
-          composeTestRule.onNodeWithText("Add events clicking on (+)".uppercase(Locale.ROOT))
-              .assertExists()
-      }
-
-      @Test
-      fun onResume_shouldShowListItemsAndFab() {
-          addTwoRegisteredEventsToDB()
-          composeTestRule.waitUntil(
-              timeoutMillis = timeOutToShowScreenView
-          ) {
-              composeTestRule.onAllNodesWithTag("fab_add_new_event")
-                  .fetchSemanticsNodes().size == 1
-          }
-          composeTestRule
-              .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
-              .assertIsDisplayed()
-
-          composeTestRule.onNodeWithText("name 1", useUnmergedTree = true)
-              .assertIsDisplayed()
-          composeTestRule.onNodeWithText("name 2", useUnmergedTree = true)
-              .assertIsDisplayed()
-      }
-
-      @Test
-      fun clickOnFab_shouldNavigateToAddNewRegisteredEvent() {
-          composeTestRule.waitUntil(
-              timeoutMillis = timeOutToShowScreenView
-          ) {
-              composeTestRule.onAllNodesWithTag("fab_add_new_event")
-                  .fetchSemanticsNodes().size == 1
-          }
-          composeTestRule
-              .onNodeWithTag("fab_add_new_event", useUnmergedTree = true)
-              .performClick()
-          composeTestRule.waitUntil(
-              timeoutMillis = timeOutToShowScreenView
-          ) {
-              composeTestRule.onAllNodesWithTag("AddRegisteredEventsListHeader")
-                  .fetchSemanticsNodes().size == 1
-          }
-          composeTestRule.onNodeWithTag("AddRegisteredEventsListHeader", useUnmergedTree = true)
-              .assertExists()
-      }*/
-
+    // RegisteredEvents Screen tests
     @Test
     fun shouldFillForm_whenWritingOnAddEventScreen_andSave() {
 
@@ -227,7 +174,7 @@ class MainActivityTest {
         }
     }
 
-   @Test
+    @Test
     fun should_navigateToEditScreen_whenItemIsClicked_thenDeleteItem() {
         // Alimenta o banco de dados com itens da lista
         addTwoRegisteredEventsToDB()
@@ -262,29 +209,229 @@ class MainActivityTest {
                 .fetchSemanticsNodes().size == 1
         }
 
-       // Clica no botão de sim
-       composeTestRule.onNodeWithText("Yes").performClick()
+        // Clica no botão de sim
+        composeTestRule.onNodeWithText("Yes").performClick()
 
-       // volta para a tela inicial
-       composeTestRule.waitUntil(
-           timeoutMillis = timeOutToShowScreenView
-       ) {
-           composeTestRule.onAllNodesWithTag("fab_add_new_event")
-               .fetchSemanticsNodes().size == 1
-       }
+        // volta para a tela inicial
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                .fetchSemanticsNodes().size == 1
+        }
 
         // Verifica que o item 1 foi apagado
-       composeTestRule.onNodeWithText("name 1").assertDoesNotExist()
+        composeTestRule.onNodeWithText("name 1").assertDoesNotExist()
 
 
+    }
 
-   }
+    // Friends Screen tests
+    @Test
+    fun shouldFillForm_whenWritingOnAddFriendScreen_andSave() {
+        // Espera o FAB aparecer para ter certeza que a tela foi carregada
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clica no ícone da aba de amigos:
+        composeTestRule
+            .onNodeWithContentDescription("Navigation Icon Friends")
+            .performClick()
+
+        // Espera o FAB da tela de amigos aparecer para ter certeza que a tela foi carregada
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_friend")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // Clica no botão de adicionar amigos
+        composeTestRule
+            .onNodeWithTag("fab_add_new_friend")
+            .performClick()
+
+
+        // Espera a nova tela carregar
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
+            composeTestRule.onAllNodesWithTag("Nome")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // Preenche o formulário e verifica que o botão de salvar não aprarece até preencher
+        composeTestRule.onNodeWithTag("AnimatedSaveButtonTag").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("Nome").performTextInput("João")
+
+        composeTestRule.onNodeWithTag("AnimatedSaveButtonTag").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("Sobrenome").performTextInput("da Silva")
+
+        composeTestRule.onNodeWithTag("AnimatedSaveButtonTag").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("Telefone").performTextInput("(21) 99999-1234")
+
+        composeTestRule.onNodeWithTag("AnimatedSaveButtonTag").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("Documento").performTextInput("123.456.789-00")
+
+        composeTestRule.onNodeWithTag("AnimatedSaveButtonTag").assertExists()
+
+        // Verifica se o item mostra os campos preenchidos:
+        composeTestRule.onAllNodesWithText("João da Silva").assertCountEquals(1)
+        composeTestRule.onAllNodesWithText("(21) 99999-1234").assertCountEquals(2)
+        composeTestRule.onAllNodesWithText("123.456.789-00").assertCountEquals(2)
+
+        // Clica no botão de salvar
+        composeTestRule.onNodeWithTag("AnimatedSaveButtonTag").performClick()
+
+        // Volta para a tela inicial e verifica se o item foi criado
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_friend")
+                .fetchSemanticsNodes().size == 1
+        }
+        composeTestRule.onNodeWithText("João da Silva", useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun should_navigateToFriendEditScreen_whenItemIsClicked_thenEditAndUpdate() {
+        // Alimenta o banco de dados com itens da lista
+        addTwoFriendsToDB()
+
+        // Espera o FAB aparecer
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clica no ícone da aba de amigos:
+        composeTestRule
+            .onNodeWithContentDescription("Navigation Icon Friends")
+            .performClick()
+
+        // Espera o FAB da tela de amigos aparecer para ter certeza que a tela foi carregada
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_friend")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clica no item 01
+        composeTestRule
+            .onNodeWithText("John Doe")
+            .performClick()
+
+        // Espera a tela de edição aparacer
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
+            composeTestRule.onAllNodesWithTag("EditFriendHeader")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // Verifica que o botão de atualizar ainda não está visível
+        composeTestRule.onNodeWithTag("UpdateFriendButton").assertDoesNotExist()
+
+        // clica e edita o nome
+        composeTestRule.onNodeWithTag("Nome").performTextInput(
+            " Pedro"
+        )
+
+        // Espera botão de atualizar ficar visível
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("UpdateFriendButton")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // Clica no botão de atualizar
+        composeTestRule.onNodeWithTag("UpdateFriendButton").performClick()
+
+        // Espera voltar para a tela inicial e verifica se o item foi atualizado
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithText("John Pedro Doe")
+                .fetchSemanticsNodes().size == 1
+        }
+    }
+
+    @Test
+    fun should_navigateToEditFriendScreen_whenItemIsClicked_thenDeleteItem() {
+        // Alimenta o banco de dados com itens da lista
+        addTwoFriendsToDB()
+        // Espera o FAB aparecer
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clica no ícone da aba de amigos:
+        composeTestRule
+            .onNodeWithContentDescription("Navigation Icon Friends")
+            .performClick()
+
+        // Espera o FAB da tela de amigos aparecer para ter certeza que a tela foi carregada
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_friend")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clica no item 01
+        composeTestRule
+            .onNodeWithText("John Doe")
+            .performClick()
+
+        // Espera a tela de edição aparacer
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
+            composeTestRule.onAllNodesWithTag("EditFriendHeader")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // clica e edita o nome
+        composeTestRule.onNodeWithTag("DeleteIcon").performClick()
+
+        // Espera aparecer o diálogo de confirmação
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithText("Yes")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // Clica no botão de sim
+        composeTestRule.onNodeWithText("Yes").performClick()
+
+        // volta para a tela inicial
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_friend")
+                .fetchSemanticsNodes().size == 1
+        }
+
+        // Verifica que o item 1 foi apagado
+        composeTestRule.onNodeWithText("John Doe").assertDoesNotExist()
+
+
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Funções auxiliares:
     fun addTwoRegisteredEventsToDB() {
         MockDb.addTwoRegisteredEventsToDB()
+    }
+
+    fun addTwoFriendsToDB() {
+        MockDb.addTwoFriendsToDB()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

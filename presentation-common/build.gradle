@@ -45,6 +45,7 @@ dependencies {
     implementation coroutines.coroutinesAndroid
     implementation androidx.composeUi
     implementation androidx.composeMaterial
+    implementation androidx.composeUiToolingPreview
     implementation androidx.viewModelKtx
     implementation androidx.viewModelCompose
     implementation androidx.lifecycleRuntimeKtx
