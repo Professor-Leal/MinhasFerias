@@ -24,8 +24,8 @@ class MockDb {
             _friendsListFlow.value = friendList
         }
 
-        fun getFriend(id: Long): Flow<Friend> = flow{
-            _friendsListFlow.value.filter{
+        fun getFriend(id: Long): Flow<Friend> = flow {
+            _friendsListFlow.value.filter {
                 it.id == id
             }.firstOrNull()?.let { emit(it) } ?: throw UseCaseException.FriendException(
                 Throwable("Friend of id = $id not found")
@@ -34,8 +34,8 @@ class MockDb {
 
         fun updateFriend(friend: Friend): Flow<Boolean> = flow {
             val actualList = _friendsListFlow.value.toMutableList()
-            val filteredList = actualList.filter{ it.id == friend.id }
-            if (filteredList.isNullOrEmpty() ){
+            val filteredList = actualList.filter { it.id == friend.id }
+            if (filteredList.isNullOrEmpty()) {
                 emit(false)
             } else {
                 actualList.remove(filteredList.get(0))
@@ -47,14 +47,22 @@ class MockDb {
 
         fun deleteFriend(id: Long): Flow<Boolean> = flow {
             val actualList = _friendsListFlow.value.toMutableList()
-            val filteredList = actualList.filter{ it.id == id }
-            if (filteredList.isNullOrEmpty() ){
+            val filteredList = actualList.filter { it.id == id }
+            if (filteredList.isNullOrEmpty()) {
                 emit(false)
             } else {
                 actualList.remove(filteredList.get(0))
                 _friendsListFlow.value = actualList.sortedBy { it.id }
                 emit(true)
             }
+        }
+
+        fun searchFriendsByName(searchInput: String): Flow<List<Friend>> = flow {
+            val filteredList: MutableList<Friend> = _friendsListFlow.value.filter {
+                it.name.contains(searchInput) || it.surname.contains(searchInput)
+            }.toMutableList()
+            _friendsListFlow.value = filteredList.toList()
+            emit(filteredList)
         }
 
         // RegisteredEvents
@@ -89,7 +97,7 @@ class MockDb {
             _registeredEventsListFlow.value = registeredEventList
         }
 
-         fun addTwoFriendsToDB() {
+        fun addTwoFriendsToDB() {
             friendList = mutableListOf<Friend>(
                 Friend(
                     name = "John",
@@ -109,8 +117,8 @@ class MockDb {
             _friendsListFlow.value = friendList
         }
 
-        fun getRegisteredEvent(id: Long): Flow<RegisteredEvent> = flow{
-            _registeredEventsListFlow.value.filter{
+        fun getRegisteredEvent(id: Long): Flow<RegisteredEvent> = flow {
+            _registeredEventsListFlow.value.filter {
                 it.id == id
             }.firstOrNull()?.let { emit(it) } ?: throw UseCaseException.RegisteredEventException(
                 Throwable("RegisteredEvent of id = $id not found")
@@ -119,8 +127,8 @@ class MockDb {
 
         fun updateRegisteredEvent(registeredEvent: RegisteredEvent): Flow<Boolean> = flow {
             val actualList = _registeredEventsListFlow.value.toMutableList()
-            val filteredList = actualList.filter{ it.id == registeredEvent.id }
-            if (filteredList.isNullOrEmpty() ){
+            val filteredList = actualList.filter { it.id == registeredEvent.id }
+            if (filteredList.isNullOrEmpty()) {
                 emit(false)
             } else {
                 actualList.remove(filteredList.get(0))
@@ -132,8 +140,8 @@ class MockDb {
 
         fun deleteRegisteredEvent(id: Long): Flow<Boolean> = flow {
             val actualList = _registeredEventsListFlow.value.toMutableList()
-            val filteredList = actualList.filter{ it.id == id }
-            if (filteredList.isNullOrEmpty() ){
+            val filteredList = actualList.filter { it.id == id }
+            if (filteredList.isNullOrEmpty()) {
                 emit(false)
             } else {
                 actualList.remove(filteredList.get(0))

@@ -16,10 +16,11 @@ class MockFriendsLocalDataSource @Inject constructor() : FriendsLocalDataSource 
     override fun getFriend(id: Long): Flow<Friend> =
         MockDb.getFriend(id)
 
-    override fun updateFriend(friend: Friend): Flow<Boolean>
-            = MockDb.updateFriend(friend)
+    override fun updateFriend(friend: Friend): Flow<Boolean> = MockDb.updateFriend(friend)
 
-    override fun deleteFriend(id: Long): Flow<Boolean>
-            = MockDb.deleteFriend(id)
+    override fun deleteFriend(id: Long): Flow<Boolean> = MockDb.deleteFriend(id)
+
+    override fun searchFriendsByName(searchInput: String): Flow<List<Friend>> =
+        MockDb.searchFriendsByName(searchInput)
 
 }

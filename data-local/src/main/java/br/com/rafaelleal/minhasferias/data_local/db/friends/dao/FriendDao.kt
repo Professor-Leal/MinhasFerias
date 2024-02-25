@@ -29,5 +29,8 @@ interface FriendDao {
     @Query("DELETE FROM Friend WHERE id = :id")
     fun deleteFriend(id: Long): Int
 
+    @Query("SELECT * FROM Friend WHERE name LIKE :searchInput OR surname LIKE :searchInput")
+    fun searchFriendsByName(searchInput: String): Flow<List<FriendEntity>>
+
 }
 

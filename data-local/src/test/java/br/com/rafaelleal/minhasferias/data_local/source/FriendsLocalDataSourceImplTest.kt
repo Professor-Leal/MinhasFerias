@@ -114,6 +114,18 @@ class FriendsLocalDataSourceImplTest {
         verify(dao).deleteFriend(id)
     }
 
+    @ExperimentalCoroutinesApi
+    @Test
+    fun searchFriendsByName(): Unit = runBlocking {
+        val searchInput = "Nam"
+        val list = listOf(friend01)
+        val listEntity = listOf(friendEntity01)
+        whenever(dao.searchFriendsByName(searchInput)).thenReturn(flowOf(listEntity))
+        val result = dataSource.searchFriendsByName(searchInput).single()
+        val expected = list
+        assertEquals(expected, result)
+        verify(dao).searchFriendsByName(searchInput)
+    }
 
 }
 

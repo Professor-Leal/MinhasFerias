@@ -9,4 +9,5 @@ interface FriendsLocalDataSource {
     fun getFriend(id: Long): Flow<Friend>
     fun updateFriend(friend: Friend): Flow<Boolean>
     fun deleteFriend(id: Long): Flow<Boolean>
+    fun searchFriendsByName(searchInput: String): Flow<List<Friend>>
 }

@@ -77,5 +77,19 @@ class FriendsRepositoryImplTest{
         verify(localFriendsDataSource).deleteFriend(id)
     }
 
+    @ExperimentalCoroutinesApi
+    @Test
+    fun searchFriendsByName(): Unit = runBlocking {
+        val searchInput = "Ped"
+        val listMock = mock<List<Friend>>()
+        whenever(localFriendsDataSource.searchFriendsByName(searchInput))
+            .thenReturn(flowOf(listMock))
+        val expected = listMock
+        val response = repositoryImpl.searchFriendsByName(searchInput).single()
+        assertEquals(expected, response)
+        verify(localFriendsDataSource).searchFriendsByName(searchInput)
+    }
+
+
 
 }
