@@ -28,7 +28,8 @@ android {
         targetCompatibility javaCompileVersion
     }
     kotlinOptions {
-        jvmTarget = jvmTargetNumber}
+        jvmTarget = jvmTargetNumber
+    }
 }
 
 dependencies {

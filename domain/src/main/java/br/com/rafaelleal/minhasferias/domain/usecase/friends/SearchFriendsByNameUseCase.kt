@@ -1,14 +1,16 @@
 package br.com.rafaelleal.minhasferias.domain.usecase.friends
 
 import br.com.rafaelleal.minhasferias.domain.models.Friend
+import br.com.rafaelleal.minhasferias.domain.repositories.EventFriendRepository
 import br.com.rafaelleal.minhasferias.domain.repositories.FriendsRepository
 import br.com.rafaelleal.minhasferias.domain.usecase.UseCase
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-class SearchFriendsByNameUseCase  @Inject constructor(
+class SearchFriendsByNameUseCase @Inject constructor(
     configuration: UseCase.Configuration,
+    private val eventFriendRepository: EventFriendRepository,
     private val friendsRepository: FriendsRepository
 ) : UseCase<
         SearchFriendsByNameUseCase.Request,
@@ -16,12 +18,21 @@ class SearchFriendsByNameUseCase  @Inject constructor(
         >(configuration) {
     override fun process(
         request: Request
-    ): Flow<Response> =
-        friendsRepository.searchFriendsByName(request.searchInput)
-            .map { _list ->
-                Response(_list)
-            }
+    ): Flow<Response>  {
+        return combine(
+            eventFriendRepository.getFriendsFromEvent(request.eventId),
+            friendsRepository.searchFriendsByName(request.searchInput)
+        ) { _eventFriends, _allFriends ->
+            SearchFriendsByNameUseCase.Response(
+                listOfFriends = _eventFriends,
+                allFriends = _allFriends
+            )
+        }
+    }
 
-    data class Request(val searchInput: String) : UseCase.Request
-    data class Response(val list: List<Friend>) : UseCase.Response
+    data class Request(val searchInput: String, val eventId: Long) : UseCase.Request
+    data class Response(
+        val listOfFriends: List<Friend>,
+        val allFriends: List<Friend>
+    ) : UseCase.Response
 }
