@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun CloseIcon(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     DefaultIcon(

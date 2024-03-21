@@ -1,25 +1,22 @@
 package br.com.rafaelleal.minhasferias.presentation_events_friends.converters
 
-import android.content.Context
 import br.com.rafaelleal.minhasferias.domain.events_friends.usecase.GetRegisteredEventWithFriendsUseCase
 import br.com.rafaelleal.minhasferias.presentation_common.converters.CommonResultConverter
 import br.com.rafaelleal.minhasferias.presentation_events_friends.models.EventFriendListItem
 import br.com.rafaelleal.minhasferias.presentation_events_friends.models.EventWithFriendsUiModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class GetRegisteredEventWithFriendsConverter @Inject constructor(
-    @ApplicationContext private val context: Context
-) : CommonResultConverter<GetRegisteredEventWithFriendsUseCase.Response, EventWithFriendsUiModel>() {
+class GetRegisteredEventWithFriendsConverter @Inject constructor() :
+    CommonResultConverter<GetRegisteredEventWithFriendsUseCase.Response, EventWithFriendsUiModel>() {
     override fun convertSuccess(
         data: GetRegisteredEventWithFriendsUseCase.Response
     ): EventWithFriendsUiModel {
-        val selectedFriendIdList = data.listOfFriends.map { it.id}
+        val selectedFriendIdList = data.listOfFriends.map { it.id }
         return EventWithFriendsUiModel(
             eventId = data.event.id,
             eventName = data.event.name,
             eventTime = "${data.event.day} - ${data.event.time}",
-            friendList = data.allFriends.map{ _friend->
+            friendList = data.allFriends.map { _friend ->
                 EventFriendListItem(
                     id = _friend.id,
                     name = "${_friend.name} ${_friend.surname}",

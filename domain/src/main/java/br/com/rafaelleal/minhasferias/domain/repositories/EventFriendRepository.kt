@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface EventFriendRepository {
     fun getFriendsFromEvent(eventId: Long): Flow<List<Friend>>
+    fun changeEventFriendRelationship(eventId: Long, friendId: Long): Flow<Boolean>
 }

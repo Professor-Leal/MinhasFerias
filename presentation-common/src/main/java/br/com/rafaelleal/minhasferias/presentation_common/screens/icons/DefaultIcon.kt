@@ -14,7 +14,7 @@ import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.White
 
 @Composable
 fun DefaultIcon(
-    modifier : Modifier,
+    modifier: Modifier = Modifier,
     icon: ImageVector,
     contentDescription: String = "Default Icon",
     onClick: () -> Unit = {}

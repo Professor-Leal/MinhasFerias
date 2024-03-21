@@ -12,7 +12,7 @@ import br.com.rafaelleal.minhasferias.presentation_common.sealed.FriendsNavRoute
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.RegisteredEventsNavRoutes
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToAddNewEvent
 import br.com.rafaelleal.minhasferias.presentation_friends.ui.list.FriendsListScreen
-import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListScreen
+import br.com.rafaelleal.minhasferias.presentation_registered_events.ui.list.RegisteredEventsListScreen
 
 const val GRAPH_ROUTE_BOTTOM = "graph_bottom"
 

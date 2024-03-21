@@ -7,9 +7,8 @@ import br.com.rafaelleal.minhasferias.presentation_events_friends.models.EventFr
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class SearchFriendsByNameConverter @Inject constructor(
-    @ApplicationContext private val context: Context
-) : CommonResultConverter<SearchFriendsByNameUseCase.Response, List<EventFriendListItem>>() {
+class SearchFriendsByNameConverter @Inject constructor()
+    : CommonResultConverter<SearchFriendsByNameUseCase.Response, List<EventFriendListItem>>() {
     override fun convertSuccess(
         data: SearchFriendsByNameUseCase.Response
     ): List<EventFriendListItem> {

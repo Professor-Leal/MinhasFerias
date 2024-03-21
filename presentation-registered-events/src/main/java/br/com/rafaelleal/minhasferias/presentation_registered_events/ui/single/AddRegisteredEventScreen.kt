@@ -1,13 +1,8 @@
-package br.com.rafaelleal.minhasferias.presentation_registered_events.single
+package br.com.rafaelleal.minhasferias.presentation_registered_events.ui.single
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -39,7 +33,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -48,12 +41,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
+import br.com.rafaelleal.minhasferias.presentation_common.screens.buttons.AnimatedSaveButton
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.UiState
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue90
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Navy
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.White
 import br.com.rafaelleal.minhasferias.presentation_registered_events.R
-import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListItem
+import br.com.rafaelleal.minhasferias.presentation_registered_events.ui.list.RegisteredEventsListItem
 import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventListItemModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels.RegisteredEventsListViewModel
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
@@ -146,8 +140,10 @@ fun FormAddRegisteredEventScreen(
     }
 
     val closeDateSelection: UseCaseState.() -> Unit = { updateButtonVisibility() }
-    val calendarState =  rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
-    val clockState =  rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
+    val calendarState =
+        rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
+    val clockState =
+        rememberUseCaseState(visible = false, onCloseRequest = { closeDateSelection() })
 
 
     CalendarDialog(
@@ -164,7 +160,7 @@ fun FormAddRegisteredEventScreen(
     ClockDialog(
         clockState,
         selection = ClockSelection.HoursMinutes { hours, minutes ->
-            time = formatTime(LocalTime.of(hours, minutes, 0) )
+            time = formatTime(LocalTime.of(hours, minutes, 0))
         },
         config = ClockConfig(
             defaultTime = LocalTime.NOON,
@@ -295,16 +291,7 @@ fun AddTextInputPreview() {
 
 @Composable
 fun SaveRegisteredEventButton(visible: Boolean, onClick: () -> Unit) {
-
-    AnimatedVisibility(visible = visible, enter = fadeIn(), exit = fadeOut()) {
-        Button(modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .testTag("SaveRegisteredEventButton"),
-            onClick = { onClick() }) {
-            Text(stringResource(R.string.save))
-        }
-    }
+    AnimatedSaveButton(visible = visible, onClick = onClick, testTag = "SaveRegisteredEventButton")
 }
 
 @Preview(showBackground = true)

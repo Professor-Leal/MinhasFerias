@@ -6,27 +6,51 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.rafaelleal.minhasferias.domain.events_friends.usecase.GetRegisteredEventWithFriendsUseCase
+import br.com.rafaelleal.minhasferias.domain.events_friends.usecase.ChangeEventFriendRelationshipUseCase
 import br.com.rafaelleal.minhasferias.domain.usecase.friends.SearchFriendsByNameUseCase
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.UiState
+import br.com.rafaelleal.minhasferias.presentation_events_friends.converters.ChangeEventFriendRelationshipConverter
 import br.com.rafaelleal.minhasferias.presentation_events_friends.converters.GetRegisteredEventWithFriendsConverter
 import br.com.rafaelleal.minhasferias.presentation_events_friends.converters.SearchFriendsByNameConverter
 import br.com.rafaelleal.minhasferias.presentation_events_friends.models.EventFriendListItem
 import br.com.rafaelleal.minhasferias.presentation_events_friends.models.EventWithFriendsUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class AddFriendsToEventViewModel @Inject constructor(
     private val getRegisteredEventWithFriendsUseCase: GetRegisteredEventWithFriendsUseCase,
     private val getRegisteredEventWithFriendsConverter: GetRegisteredEventWithFriendsConverter,
     private val searchFriendsByNameUseCase: SearchFriendsByNameUseCase,
     private val searchFriendsByNameConverter: SearchFriendsByNameConverter,
+    private val changeEventFriendRelationshipUseCase: ChangeEventFriendRelationshipUseCase,
+    private val changeEventFriendRelationshipConverter: ChangeEventFriendRelationshipConverter
 ) : ViewModel() {
 
     private var eventId = 0L
+
+    private val _changeEventFriendRelationshipFlow =
+        MutableStateFlow<UiState<Boolean>>(UiState.Loading)
+    val changeEventFriendRelationshipFlow: StateFlow<UiState<Boolean>> =
+        _changeEventFriendRelationshipFlow
+
+    fun changeEventFriendRelationship(friendId: Long) {
+        viewModelScope.launch {
+            _changeEventFriendRelationshipFlow.value = UiState.Loading
+            changeEventFriendRelationshipUseCase.execute(
+                ChangeEventFriendRelationshipUseCase.Request(eventId = eventId, friendId = friendId)
+            ).map {
+                changeEventFriendRelationshipConverter.convert(it)
+            }.collect {
+                _changeEventFriendRelationshipFlow.value = it
+            }
+        }
+    }
+
 
     // Referente ao load inicial:
     private val _resgisteredEventWithFriendsFlow =
@@ -64,10 +88,13 @@ class AddFriendsToEventViewModel @Inject constructor(
         viewModelScope.launch {
             _filteredFriendListFlow.value = UiState.Loading
             searchFriendsByNameUseCase.execute(
-                SearchFriendsByNameUseCase.Request(searchInput = "%${searchInput}%", eventId = this@AddFriendsToEventViewModel.eventId)
-            ).map{
+                SearchFriendsByNameUseCase.Request(
+                    searchInput = "%${searchInput}%",
+                    eventId = this@AddFriendsToEventViewModel.eventId
+                )
+            ).map {
                 searchFriendsByNameConverter.convert(it)
-            }.collect{
+            }.collect {
                 _filteredFriendListFlow.value = it
             }
         }

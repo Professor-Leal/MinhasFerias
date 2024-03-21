@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -36,9 +35,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import br.com.rafaelleal.minhasferias.presentation_common.screens.CommonScreen
+import br.com.rafaelleal.minhasferias.presentation_common.screens.icons.CheckIcon
+import br.com.rafaelleal.minhasferias.presentation_common.screens.icons.EmptyCheckIcon
 import br.com.rafaelleal.minhasferias.presentation_common.screens.inputs.SearchTextField
 import br.com.rafaelleal.minhasferias.presentation_common.screens.texts.ParagraphBoldText
 import br.com.rafaelleal.minhasferias.presentation_common.screens.texts.ParagraphText
@@ -90,7 +90,7 @@ val itemMock = EventWithFriendsUiModel(
 fun AddFriendsToEventScreen(
     eventId: Long,
     navController: NavHostController,
-    viewModel: AddFriendsToEventViewModel = hiltViewModel()
+    viewModel: AddFriendsToEventViewModel
 ) {
     val currentSearchText by viewModel.currentSearchTextState
 
@@ -98,6 +98,9 @@ fun AddFriendsToEventScreen(
         mutableStateOf(UiState.Loading)
     }
     var filteredFriendListUiState: UiState<List<EventFriendListItem>> by remember {
+        mutableStateOf(UiState.Loading)
+    }
+    var changeEventFriendRelationshipUiState: UiState<Boolean> by remember {
         mutableStateOf(UiState.Loading)
     }
     LaunchedEffect(true) {
@@ -113,6 +116,10 @@ fun AddFriendsToEventScreen(
     viewModel.filteredFriendListFlow.collectAsState().value.let { state ->
         filteredFriendListUiState = state
     }
+    viewModel.changeEventFriendRelationshipFlow.collectAsState().value.let { state ->
+        changeEventFriendRelationshipUiState = state
+    }
+
     CommonScreen(state = uiState) {
         AddFriendsToEventBody(
             it,
@@ -120,6 +127,7 @@ fun AddFriendsToEventScreen(
             currentSearchText = currentSearchText,
             onSearchTextChanged = { viewModel.setCurrentSearchText(value = it) },
             onSearchDispatched = { viewModel.searchFriends(searchInput = it) },
+            onFriendClick = { friendId: Long -> viewModel.changeEventFriendRelationship(friendId) }
         )
     }
 }
@@ -131,7 +139,8 @@ fun AddFriendsToEventBody(
     currentSearchText: String = "",
     onSearchTextChanged: (String) -> Unit = {},
     onSearchDeactivated: () -> Unit = {},
-    onSearchDispatched: (String) -> Unit = {}
+    onSearchDispatched: (String) -> Unit = {},
+    onFriendClick: (friendId: Long) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -147,7 +156,7 @@ fun AddFriendsToEventBody(
             placeHolder = stringResource(R.string.search_a_friend)
         )
         CommonScreen(state = filteredList) {
-            FriendFromEventList(it)
+            FriendFromEventList(it, onFriendClick)
         }
     }
 }
@@ -188,10 +197,28 @@ fun EventCardPreview() {
     )
 }
 
+@Preview
+@Composable
+fun SearchTextFieldPreview() {
+    SearchTextField(
+        currentSearchText = "",
+        placeHolder = stringResource(R.string.search_a_friend)
+    )
+}
+
+@Preview
+@Composable
+fun SearchTextFieldWithtextPreview() {
+    SearchTextField(
+        currentSearchText = "currentSearchText",
+        placeHolder = stringResource(R.string.search_a_friend)
+    )
+}
+
 @Composable
 fun FriendFromEvent(
     friend: EventFriendListItem,
-    onClick: (friend: EventFriendListItem) -> Unit = {}
+    onFriendClick: (friendId: Long) -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -201,7 +228,8 @@ fun FriendFromEvent(
             .background(color = Blue90)
             .wrapContentHeight(Alignment.CenterVertically)
             .heightIn(0.dp, 60.dp)
-            .clickable { onClick(friend) }
+            .testTag("FriendFromEvent-${friend.id}")
+            .clickable { onFriendClick(friend.id) }
     ) {
         Icon(
             imageVector = Icons.Filled.Person,
@@ -219,12 +247,11 @@ fun FriendFromEvent(
                 .fillMaxWidth()
         )
 
-        Checkbox(
-            checked = friend.selected,
-            onCheckedChange = {},
-            colors = CheckboxDefaults.colors(Navy)
-        )
-
+        if(friend.selected){
+            CheckIcon(modifier = Modifier)
+        } else {
+            EmptyCheckIcon(modifier = Modifier)
+        }
     }
 }
 
@@ -235,10 +262,13 @@ fun FriendFromEventPreview() {
 }
 
 @Composable
-fun FriendFromEventList(friendList: List<EventFriendListItem> = emptyList()) {
+fun FriendFromEventList(
+    friendList: List<EventFriendListItem> = emptyList(),
+    onFriendClick: (friendId: Long) -> Unit = {}
+) {
     LazyColumn(modifier = Modifier) {
         items(friendList) { item ->
-            FriendFromEvent(item)
+            FriendFromEvent(item, onFriendClick)
         }
     }
 }

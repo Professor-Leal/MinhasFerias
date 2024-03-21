@@ -1,7 +1,9 @@
 package br.com.rafaelleal.minhasferias.data_repository.injection
 
+import br.com.rafaelleal.minhasferias.data_repository.repositories.EventFriendRepositoryImpl
 import br.com.rafaelleal.minhasferias.data_repository.repositories.FriendsRepositoryImpl
 import br.com.rafaelleal.minhasferias.data_repository.repositories.RegisteredEventsRepositoryImpl
+import br.com.rafaelleal.minhasferias.domain.repositories.EventFriendRepository
 import br.com.rafaelleal.minhasferias.domain.repositories.FriendsRepository
 import br.com.rafaelleal.minhasferias.domain.repositories.RegisteredEventsRepository
 import dagger.Binds
@@ -25,4 +27,10 @@ abstract class RepositoryModule {
     abstract fun bindFriendsRepository(
         friendsRepositoryImpl: FriendsRepositoryImpl
     ): FriendsRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindEventFriendRepository(
+        eventFriendRepositoryImpl: EventFriendRepositoryImpl
+    ): EventFriendRepository
 }

@@ -3,6 +3,28 @@ plugins {
     id 'kotlin-android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+    id 'jacoco'
+}
+
+//koverReport {
+//    filters {
+//        excludes {
+//            classes("*Factory*") // Exclude specific
+//        }
+//    }
+//}
+//koverReport  {
+//    filters {
+//        classes {
+//            excludes += listOf("*di.*", "*Factory*")
+//        }
+//    }
+//}
+
+tasks.withType(Test.class).configureEach {
+    jacoco {
+        excludes = ["*"]
+    }
 }
 
 android {
@@ -47,4 +69,23 @@ dependencies {
     testImplementation test.junit
     testImplementation test.coroutines
     testImplementation test.mockito
+
+    testImplementation test.junit
+    androidTestImplementation androidTest.navigationTesting
+
+    androidTestImplementation androidTest.junit
+    androidTestImplementation androidTest.espressoCore
+    androidTestImplementation androidTest.idlingResource
+    androidTestImplementation androidTest.core
+    androidTestImplementation androidTest.rules
+    androidTestImplementation androidTest.runner
+    androidTestImplementation androidTest.hilt
+    kaptAndroidTest androidTest.hiltCompiler
+    androidTestImplementation androidTest.composeUiTestJunit
+    debugImplementation androidTest.composeManifest
+    androidTestUtil androidTest.orchestrator
+    androidTestImplementation androidTest.roomTesting
+
+
+
 }

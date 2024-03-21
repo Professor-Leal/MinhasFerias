@@ -8,7 +8,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SearchIcon(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     DefaultIcon(
