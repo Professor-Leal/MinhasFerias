@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -43,8 +44,10 @@ import br.com.rafaelleal.minhasferias.domain.models.Friend
 import br.com.rafaelleal.minhasferias.presentation_common.screens.CommonScreen
 import br.com.rafaelleal.minhasferias.presentation_common.screens.inputs.AddTextInput
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.UiState
+import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue70
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue90
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Navy
+import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.White
 import br.com.rafaelleal.minhasferias.presentation_friends.R
 import br.com.rafaelleal.minhasferias.presentation_friends.models.FriendListItemModel
 import br.com.rafaelleal.minhasferias.presentation_friends.ui.list.FriendsListItem
@@ -238,6 +241,7 @@ fun UpdateFriendButton(visible: Boolean, onClick: () -> Unit) {
             .padding(16.dp)
             .fillMaxWidth()
             .testTag("UpdateFriendButton"),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Navy, contentColor = White, disabledBackgroundColor = Blue70 ),
             onClick = { onClick() }) {
             Text(stringResource(R.string.update))
         }

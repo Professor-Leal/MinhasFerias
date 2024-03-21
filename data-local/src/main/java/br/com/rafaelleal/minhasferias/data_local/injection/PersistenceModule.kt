@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.room.Room
 import br.com.rafaelleal.minhasferias.data_local.db.AppDatabase
 import br.com.rafaelleal.minhasferias.data_local.db.MIGRATION_LIST
+import br.com.rafaelleal.minhasferias.data_local.db.events_friends.dao.EventFriendDao
 import br.com.rafaelleal.minhasferias.data_local.db.friends.dao.FriendDao
 import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.dao.RegisteredEventDao
 import dagger.Module
@@ -44,4 +45,10 @@ class PersistenceModule {
     @ViewModelScoped
     fun provideFriendDao(appDatabase: AppDatabase): FriendDao =
         appDatabase.friendDao()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Provides
+    @ViewModelScoped
+    fun provideEventFriendDao(appDatabase: AppDatabase): EventFriendDao =
+        appDatabase.eventFriendDao()
 }

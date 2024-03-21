@@ -24,4 +24,6 @@ class FriendsRepositoryImpl  @Inject constructor(
     override fun deleteFriend(id: Long): Flow<Boolean>
             = friendsLocalDataSource.deleteFriend(id)
 
+    override fun searchFriendsByName(searchInput: String): Flow<List<Friend>>
+            = friendsLocalDataSource.searchFriendsByName(searchInput)
 }

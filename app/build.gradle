@@ -3,7 +3,10 @@ plugins {
     id 'kotlin-android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+    id 'jacoco'
 }
+
+apply plugin: 'org.jetbrains.kotlinx.kover'
 
 android {
     namespace 'br.com.rafaelleal.minhasferias.app'
@@ -21,7 +24,14 @@ android {
         testInstrumentationRunner "br.com.rafaelleal.minhasferias.app.CustomTestRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
         testOptions {
-            execution 'ANDROIDX_TEST_ORCHESTRATOR'
+            unitTests.all {
+                jacoco {
+                    includeNoLocationClasses = true
+                    excludes = ['jdk.internal.*']       //This line
+                }
+            }
+            unitTests.returnDefaultValues = true
+//            execution 'ANDROIDX_TEST_ORCHESTRATOR'
         }
 
         vectorDrawables {
@@ -66,7 +76,19 @@ android {
     }
 }
 
+// JACOCO:
+// https://medium.com/swlh/multi-module-multi-flavored-test-coverage-with-jacoco-in-android-bc4fb4d135a3
+
 dependencies {
+
+    kover(project(":data-local"))
+    kover(project(":data-repository"))
+    kover(project(":domain"))
+    kover(project(":presentation-common"))
+    kover(project(":presentation-registered-events"))
+    kover(project(":presentation-friends"))
+    kover(project(":presentation-events-friends"))
+
 
     // Possui dependência dos módulos:
     implementation(project(path: ":data-local"))
@@ -75,6 +97,7 @@ dependencies {
     implementation(project(path: ":presentation-common"))
     implementation(project(path: ":presentation-registered-events"))
     implementation(project(path: ":presentation-friends"))
+    implementation(project(path: ":presentation-events-friends"))
 
     implementation androidx.core
     implementation androidx.appCompat

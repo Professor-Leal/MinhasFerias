@@ -1,153 +1,197 @@
 package br.com.rafaelleal.minhasferias.app.mocks
 
+import androidx.room.Room
+import androidx.test.platform.app.InstrumentationRegistry
+import br.com.rafaelleal.minhasferias.data_local.converters.toEntity
+import br.com.rafaelleal.minhasferias.data_local.converters.toModel
+import br.com.rafaelleal.minhasferias.data_local.db.AppDatabase
+import br.com.rafaelleal.minhasferias.data_local.db.events_friends.dao.EventFriendDao
+import br.com.rafaelleal.minhasferias.data_local.db.events_friends.entities.EventFriendRelationshipEntity
+import br.com.rafaelleal.minhasferias.data_local.db.friends.dao.FriendDao
+import br.com.rafaelleal.minhasferias.data_local.db.friends.entities.FriendEntity
+import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.dao.RegisteredEventDao
+import br.com.rafaelleal.minhasferias.data_local.db.registeredevents.entities.RegisteredEventEntity
 import br.com.rafaelleal.minhasferias.domain.models.Friend
 import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
-import br.com.rafaelleal.minhasferias.domain.sealed.UseCaseException
-import br.com.rafaelleal.minhasferias.presentation_friends.models.FriendListItemModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import java.time.LocalDateTime
 
 class MockDb {
     companion object {
 
-        // Friends
-        var friendId = 1L
-        var friendList = mutableListOf<Friend>()
-        private val _friendsListFlow = MutableStateFlow<List<Friend>>(listOf())
+        var database: AppDatabase? = null
+        var registeredEventDao: RegisteredEventDao? = null
+        var friendDao: FriendDao? = null
+        var eventFriendDao: EventFriendDao? = null
 
-        fun getAllFriends(): StateFlow<List<Friend>> = _friendsListFlow
-
-        fun addFriend(friend: Friend) {
-            friendList.add(friend.copy(id = friendId++))
-            _friendsListFlow.value = friendList
+        fun initializeDatabase() {
+            if (database == null) {
+                val context = InstrumentationRegistry.getInstrumentation().targetContext
+                database = Room.inMemoryDatabaseBuilder(
+                    context, AppDatabase::class.java
+                ).allowMainThreadQueries().build()
+                eventFriendDao = database?.eventFriendDao()
+                registeredEventDao = database?.registeredEventDao()
+                friendDao = database?.friendDao()
+            }
         }
 
-        fun getFriend(id: Long): Flow<Friend> = flow{
-            _friendsListFlow.value.filter{
-                it.id == id
-            }.firstOrNull()?.let { emit(it) } ?: throw UseCaseException.FriendException(
-                Throwable("Friend of id = $id not found")
-            )
+        fun closeDatabase() {
+            database?.close()
+            database = null
+            eventFriendDao = null
+            registeredEventDao = null
+            friendDao = null
         }
+
+        fun getFriendsFromEvent(eventId: Long): Flow<List<Friend>> =
+            database!!.eventFriendDao().getFriendsFromEvent(eventId)
+                .map { _list ->
+                    _list.map {
+                        it.toModel()
+                    }
+                }
+
+        fun changeEventFriendRelationship(eventId: Long, friendId: Long): Flow<Boolean> = flow {
+            val relation = database!!.eventFriendDao().getByEventIdAndFriendId(eventId, friendId)
+            relation?.let { _relation ->
+                database!!.eventFriendDao().delete(_relation.id ?: 0)
+                emit(true)
+            } ?: run {
+                database!!.eventFriendDao().save(EventFriendRelationshipEntity(eventId, friendId))
+                emit(true)
+            }
+        }
+
+//
+
+        fun getAllFriends(): Flow<List<Friend>> = database!!.friendDao().getAll().map { _friends ->
+            _friends.map { _friend -> _friend.toModel() }
+        }
+
+        fun addFriend(friend: Friend) =
+            database!!.friendDao().save(friend.toEntity().copy(id = null))
+
+
+        fun getFriend(id: Long): Flow<Friend> =
+            database!!.friendDao().getFriend(id).map { _friend ->
+                _friend.toModel()
+            }
+
 
         fun updateFriend(friend: Friend): Flow<Boolean> = flow {
-            val actualList = _friendsListFlow.value.toMutableList()
-            val filteredList = actualList.filter{ it.id == friend.id }
-            if (filteredList.isNullOrEmpty() ){
-                emit(false)
-            } else {
-                actualList.remove(filteredList.get(0))
-                actualList.add(friend)
-                _friendsListFlow.value = actualList.sortedBy { it.id }
-                emit(true)
+            val updatedItems = database!!.friendDao().updateFriend(friend.toEntity())
+            when (updatedItems) {
+                1 -> emit(true)
+                else -> emit(false)
             }
         }
 
         fun deleteFriend(id: Long): Flow<Boolean> = flow {
-            val actualList = _friendsListFlow.value.toMutableList()
-            val filteredList = actualList.filter{ it.id == id }
-            if (filteredList.isNullOrEmpty() ){
-                emit(false)
-            } else {
-                actualList.remove(filteredList.get(0))
-                _friendsListFlow.value = actualList.sortedBy { it.id }
-                emit(true)
+            val deletedItems = database!!.friendDao().deleteFriend(id)
+            when (deletedItems) {
+                1 -> emit(true)
+                else -> emit(false)
             }
         }
 
-        // RegisteredEvents
-        var registeredEventId = 1L
-        var registeredEventList = mutableListOf<RegisteredEvent>()
-        private val _registeredEventsListFlow = MutableStateFlow<List<RegisteredEvent>>(listOf())
+        fun searchFriendsByName(searchInput: String): Flow<List<Friend>> =
+            database!!.friendDao().searchFriendsByName(searchInput).map { _friends ->
+                _friends.map { _friend -> _friend.toModel() }
+            }
 
-        fun getAllRegisteredEvents(): StateFlow<List<RegisteredEvent>> = _registeredEventsListFlow
 
-        fun addRegisteredEvent(registeredEvent: RegisteredEvent) {
-            registeredEventList.add(registeredEvent.copy(id = registeredEventId++))
-            _registeredEventsListFlow.value = registeredEventList
-        }
+        fun getAllRegisteredEvents(): Flow<List<RegisteredEvent>> =
+            database!!.registeredEventDao().getAll().map { _list ->
+                _list.map {
+                    it.toModel()
+                }
+            }
 
-        fun addTwoRegisteredEventsToDB() {
-            registeredEventList = mutableListOf<RegisteredEvent>(
-                RegisteredEvent(
-                    name = "name 1",
-                    address = "address 1",
-                    time = "12:05",
-                    day = "01/02/2023",
-                    id = 1L
-                ),
-                RegisteredEvent(
-                    name = "name 2",
-                    address = "address 2",
-                    time = "12:37",
-                    day = "01/02/2023 ",
-                    id = 2L
-                )
-            )
-            _registeredEventsListFlow.value = registeredEventList
-        }
+        fun addRegisteredEvent(registeredEvent: RegisteredEvent) =
+            database!!.registeredEventDao().save(registeredEvent.toEntity().copy(id = null))
 
-         fun addTwoFriendsToDB() {
-            friendList = mutableListOf<Friend>(
-                Friend(
-                    name = "John",
-                    surname = "Doe",
-                    phoneNumber = "555-0001",
-                    documentNumber = "111.111.111-11",
-                    id = 1L
-                ),
-                Friend(
-                    name = "Jane",
-                    surname = "Doe",
-                    phoneNumber = "555-0002",
-                    documentNumber = "111.111.111-22",
-                    id = 2L
-                )
-            )
-            _friendsListFlow.value = friendList
-        }
-
-        fun getRegisteredEvent(id: Long): Flow<RegisteredEvent> = flow{
-            _registeredEventsListFlow.value.filter{
-                it.id == id
-            }.firstOrNull()?.let { emit(it) } ?: throw UseCaseException.RegisteredEventException(
-                Throwable("RegisteredEvent of id = $id not found")
-            )
-        }
+        fun getRegisteredEvent(id: Long): Flow<RegisteredEvent> =
+            database!!.registeredEventDao().getRegisteredEvent(id).map { _event ->
+                _event.toModel()
+            }
 
         fun updateRegisteredEvent(registeredEvent: RegisteredEvent): Flow<Boolean> = flow {
-            val actualList = _registeredEventsListFlow.value.toMutableList()
-            val filteredList = actualList.filter{ it.id == registeredEvent.id }
-            if (filteredList.isNullOrEmpty() ){
-                emit(false)
-            } else {
-                actualList.remove(filteredList.get(0))
-                actualList.add(registeredEvent)
-                _registeredEventsListFlow.value = actualList.sortedBy { it.id }
-                emit(true)
+            val updatedItems =
+                database!!.registeredEventDao().updateRegisteredEvent(registeredEvent.toEntity())
+            when (updatedItems) {
+                1 -> emit(true)
+                else -> emit(false)
             }
         }
 
         fun deleteRegisteredEvent(id: Long): Flow<Boolean> = flow {
-            val actualList = _registeredEventsListFlow.value.toMutableList()
-            val filteredList = actualList.filter{ it.id == id }
-            if (filteredList.isNullOrEmpty() ){
-                emit(false)
-            } else {
-                actualList.remove(filteredList.get(0))
-                _registeredEventsListFlow.value = actualList.sortedBy { it.id }
-                emit(true)
+            val deletedItems = database!!.registeredEventDao().deleteRegisteredEvent(id)
+            when (deletedItems) {
+                1 -> emit(true)
+                else -> emit(false)
             }
         }
 
-        fun clearAll() {
-            registeredEventId = 1L
-            registeredEventList = mutableListOf<RegisteredEvent>()
 
-            friendId = 1L
-            friendList = mutableListOf<Friend>()
+        fun addEventFriendToDb() {
+            database!!.eventFriendDao().save(
+                EventFriendRelationshipEntity(
+                    id = 1L,
+                    registeredEventId = 1L,
+                    friendId = 1L
+                )
+            )
         }
+
+        fun addTwoFriendsToDB() {
+            database!!.friendDao().save(
+                *listOf(
+                    FriendEntity(
+                        name = "John",
+                        surname = "Doe",
+                        phoneNumber = "555-0001",
+                        documentNumber = "111.111.111-11",
+                        id = 1L
+                    ),
+                    FriendEntity(
+                        name = "Jane",
+                        surname = "Doe",
+                        phoneNumber = "555-0002",
+                        documentNumber = "111.111.111-22",
+                        id = 2L
+                    )
+                ).toTypedArray()
+            )
+        }
+
+        fun addTwoRegisteredEventsToDB() {
+            database?.registeredEventDao()?.save(
+                RegisteredEventEntity(
+                    name = "name 1",
+                    address = "address 1",
+                    time = "12:05",
+                    day = "01/02/2023",
+                    id = 1L,
+                    date = LocalDateTime.of(2023, 2, 1, 12, 5)
+                ),
+            )
+
+            database?.registeredEventDao()?.save(
+                RegisteredEventEntity(
+                    name = "name 2",
+                    address = "address 2",
+                    time = "12:37",
+                    day = "01/02/2023 ",
+                    id = 2L,
+                    date = LocalDateTime.of(2023, 2, 1, 12, 37)
+                ),
+            )
+
+        }
+
+
     }
 }

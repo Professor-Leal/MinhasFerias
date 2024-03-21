@@ -58,7 +58,7 @@ buildscript {
 
                 dialog : "1.2.0",
 
-                jacocoTool             : "0.8.10"
+                jacocoTool             : "0.8.11"
 
         ]
 
@@ -153,8 +153,8 @@ buildscript {
     dependencies {
         classpath "org.jacoco:org.jacoco.core:${versions.jacocoTool}"
         classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'org.jetbrains.kotlinx:kover-gradle-plugin:0.7.6'
     }
-
 }
 
 
@@ -166,118 +166,48 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "$plugin_kotlin_version"
     // Necessário para Moshi:
     id 'org.jetbrains.kotlin.kapt' version "$plugin_kotlin_version" apply false
-    id 'jacoco'
-    // Jacoco plugin: https://docs.gradle.org/current/userguide/jacoco_plugin.html#sec:jacoco_getting_started
+    // kover
+    id 'org.jetbrains.kotlinx.kover' version "0.7.5" apply false
 }
 
 
-// JACOCO NÃO ESTÁ GERANDO RELATÓRIOS - ENTENDER POR QUE NÃO.
+
+allprojects {
+    apply plugin: 'jacoco'
+    apply plugin: 'org.jetbrains.kotlinx.kover'
+    koverReport {
+        filters {
+            excludes {
+                classes("*Factory*")
+                classes("*Hilt*")
+                classes("*Activity*")
+                classes("*Application*")
+                classes("*Module*")
+                classes("*RoomTypeConverters*")
+                packages("*.ui*")
+                packages("br.com.rafaelleal.minhasferias.app.graphs")
+                packages("br.com.rafaelleal.minhasferias.data_local.db")
+                packages("*.dao")
+                packages("*.screens")
+                annotatedBy("dagger.Module")
+            }
+        }
+    }
+}
 
 subprojects {
-    apply plugin: 'jacoco'
-
-    afterEvaluate {
-        android {
-            testOptions {
-                reportDir "${project.layout.buildDirectory.get()}" +
-                        "/reports/coverage/androidTest/debug/connected"
-                // It's required for Sonar
-
-                buildTypes {
-                    // Jacoco config: It configures/enables createDebugCoverageReport task to be used in generateCodeCoverage task below
-                    debug.testCoverageEnabled = true
-                    androidTest.testCoverageEnabled = true
-                }
-            }
-
-            // Jacoco - Generate reports: https://docs.gradle.org/current/userguide/jacoco_plugin.html#default_values_of_the_jacoco_task_extension
-            tasks.register('generateCodeCoverage', JacocoReport) {
-                //dependsOn 'testDebugUnitTest',
-                dependsOn 'createDebugCoverageReport'
-
-                sourceDirectories.from = file("${project.projectDir}/src/main/java")
-                classDirectories.from = files(JacocoUtil.getKotlinFileTree(project))
-                executionData.from = fileTree(dir: project.layout.buildDirectory.get(), includes: [
-                        '**/*.exec', // unit tests
-                        '**/*.ec' // ui tests
-                ])
-                reports {
-                    html.required.set(true)
-                    html.outputLocation.set(project.layout.buildDirectory.dir('reports/jacoco').get())
-                    xml.required.set(true) // It's required for Sonar
-                    xml.outputLocation.set(file("${project.layout.buildDirectory.get()}/reports/jacoco/jacoco.xml"))
-                }
-
-            }
-        }
+    afterEvaluate { project ->
+        project.apply from: '../tools/jacoco.gradle'
     }
-
-
-// Jacoco version: https://docs.gradle.org/current/userguide/jacoco_plugin.html#sec:configuring_the_jacoco_plugin
-    jacoco {
-        toolVersion = versions.jacocoTool
-//        reportsDirectory.set(layout.buildDirectory.dir("$buildDir/reports/jacoco"))
-    }
-
-// Jacoco test options: https://docs.gradle.org/current/userguide/jacoco_plugin.html#default_values_of_the_jacoco_task_extension
-    tasks.withType(Test).configureEach {
-        jacoco {
-            includeNoLocationClasses = true // Robolectric support
-            excludes = [
-                    'jdk.internal.*', // Java compatibility
-                    'coil.compose.*'
-            ]
-        }
-        testLogging {
-            // Display the full log to identify Paparazzi test failures
-            showStackTraces = false
-        }
-        // Paparazzi screenshots Java compatibility: https://docs.gradle.org/current/userguide/toolchains.html#toolchains_for_tasks
-        javaLauncher = javaToolchains.launcherFor {
-            languageVersion = JavaLanguageVersion.of(javaCompileVersion.toString())
-        }
-    }
-
-// Jacoco test options: https://docs.gradle.org/current/userguide/jacoco_plugin.html#default_values_of_the_jacoco_task_extension
-//    tasks.withType(Test).tap {
-//        configureEach {
-//            jacoco {
-//                includeNoLocationClasses = true // Robolectric support
-//                excludes = [
-//                        'jdk.internal.*', // Java compatibility
-//                        'coil.compose.*'
-//                ]
-//            }
-//            testLogging {
-////                exceptionFormat = TestExceptionFormat.FULL
-//                // Display the full log to identify Paparazzi test failures
-//                showStackTraces = false
-//            }
-//        }
-//    }
 }
+
+
 
 // Gradle wrapper: https://docs.gradle.org/current/userguide/gradle_wrapper.html#customizing_wrapper
 tasks.named('wrapper') {
     description = "Gradle wrapper task to update binary"
-    gradleVersion = "8.3"
+    gradleVersion = "8.6"
     distributionType = Wrapper.DistributionType.BIN
 }
 
-class JacocoUtil {
-    static ConfigurableFileTree getKotlinFileTree(Project project) {
-        return project.fileTree(
-                // Where generated Kotlin classes are located
-                dir: "${project.layout.buildDirectory.get()}/tmp/kotlin-classes/debug",
-                // Exclude everything that is not created by you, e.g. created by HILT
-                excludes: [
-                        '**/BuildConfig.*',
-                        '**/*$*',
-                        '**/Hilt_*.class',
-                        'hilt_**',
-                        'dagger/hilt/**',
-                        '**/*JsonAdapter.*'
-                ]
-        )
-    }
-}
+// Kover : ./gradlew koverHtmlReportDebug

@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+    id 'jacoco'
 }
 
 android {
@@ -86,5 +87,8 @@ dependencies {
 
     androidTestImplementation 'app.cash.turbine:turbine:0.9.0'
 
-
+    testImplementation di.hiltAndrodiTesting
+    kaptTest di.hiltAndroidCompiler
+    androidTestImplementation di.hiltAndrodiTesting
+    kaptAndroidTest di.hiltAndroidCompiler
 }

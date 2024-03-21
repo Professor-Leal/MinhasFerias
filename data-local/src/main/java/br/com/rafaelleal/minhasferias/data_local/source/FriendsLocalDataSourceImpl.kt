@@ -42,6 +42,13 @@ class FriendsLocalDataSourceImpl  @Inject constructor(
         }
     }
 
+    override fun searchFriendsByName(searchInput: String): Flow<List<Friend>>
+    = friendDao.searchFriendsByName(searchInput).map{_friends ->
+        _friends.map { _friend -> _friend.toModel() }
+    }
+
+
+
 }
 
 

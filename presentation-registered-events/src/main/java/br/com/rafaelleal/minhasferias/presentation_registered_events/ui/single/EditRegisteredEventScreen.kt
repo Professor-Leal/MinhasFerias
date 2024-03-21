@@ -1,4 +1,4 @@
-package br.com.rafaelleal.minhasferias.presentation_registered_events.single
+package br.com.rafaelleal.minhasferias.presentation_registered_events.ui.single
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -16,11 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,11 +44,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.rafaelleal.minhasferias.domain.models.RegisteredEvent
 import br.com.rafaelleal.minhasferias.presentation_common.screens.CommonScreen
+import br.com.rafaelleal.minhasferias.presentation_common.screens.texts.ParagraphBoldText
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.UiState
+import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue70
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Blue90
 import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.Navy
+import br.com.rafaelleal.minhasferias.presentation_common.ui.theme.White
 import br.com.rafaelleal.minhasferias.presentation_registered_events.R
-import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListItem
+import br.com.rafaelleal.minhasferias.presentation_registered_events.ui.list.RegisteredEventsListItem
 import br.com.rafaelleal.minhasferias.presentation_registered_events.models.RegisteredEventListItemModel
 import br.com.rafaelleal.minhasferias.presentation_registered_events.viewmodels.EditRegisteredEventViewModel
 import com.maxkeppeker.sheets.core.CoreDialog
@@ -75,7 +79,8 @@ import java.time.LocalTime
 fun EditRegisteredEventScreen(
     registeredEventId: Long,
     viewModel: EditRegisteredEventViewModel,
-    backToMain: () -> Unit = {}
+    backToMain: () -> Unit = {},
+    navigateToAddFriendsToEvent: (registeredEventId: Long) -> Unit = {}
 ) {
     var uiStateBackToMain: UiState<Boolean> by remember {
         mutableStateOf(UiState.Loading)
@@ -117,7 +122,7 @@ fun EditRegisteredEventScreen(
     }
 
     CommonScreen(state = uiState) {
-        FormEditRegisteredEventScreen(it, updateRegisteredEvent, deleteRegisteredEvent)
+        FormEditRegisteredEventScreen(it, updateRegisteredEvent, deleteRegisteredEvent, navigateToAddFriendsToEvent)
     }
 }
 
@@ -128,7 +133,8 @@ fun EditRegisteredEventScreen(
 fun FormEditRegisteredEventScreen(
     item: RegisteredEvent,
     updateRegisteredEvent: (input: RegisteredEvent) -> Unit = {},
-    deleteRegisteredEvent: (registeredEventId: Long) -> Unit = {}
+    deleteRegisteredEvent: (registeredEventId: Long) -> Unit = {},
+    navigateToAddFriendsToEvent: (registeredEventId: Long) -> Unit = {}
 ) {
     val coroutineScope = rememberCoroutineScope()
     var itemId by remember { mutableStateOf(item.id) }
@@ -258,8 +264,40 @@ fun FormEditRegisteredEventScreen(
                 0L
             )
         )
+        AddFriendsButton( onClick = { navigateToAddFriendsToEvent(itemId) })
     }
 }
+
+@Composable
+fun AddFriendsButton(onClick: () -> Unit = {}) {
+    Button(
+        onClick = { onClick() },
+        colors = ButtonDefaults.buttonColors(backgroundColor = Navy ),
+        modifier = Modifier
+            .padding(8.dp)
+            .testTag("AddFriendsButton"),
+    ) {
+        Row(  modifier = Modifier
+            .fillMaxWidth()
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.person_add),
+                        contentDescription = "Add Friend Button",
+                tint = White,
+                modifier = Modifier.padding(end = 16.dp)
+            )
+            ParagraphBoldText(text = "Add Friends", color = White)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun AddFriendsButtonPreview() {
+    AddFriendsButton()
+    
+}
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true)
@@ -286,6 +324,7 @@ fun UpdateRegisteredEventButton(visible: Boolean, onClick: () -> Unit) {
             .padding(16.dp)
             .fillMaxWidth()
             .testTag("UpdateRegisteredEventButton"),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Navy, contentColor = White, disabledBackgroundColor = Blue70 ),
             onClick = { onClick() }) {
             Text(stringResource(R.string.update))
         }

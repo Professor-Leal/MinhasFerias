@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "c317789959d1d858d0b5e921df9fa9a1",
+    "identityHash": "553d79e6def45acd8b7a551243b4cf48",
     "entities": [
       {
         "tableName": "RegisteredEvent",
@@ -97,12 +97,67 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "EventFriend",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`registeredEventId` INTEGER NOT NULL, `friendId` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT, FOREIGN KEY(`registeredEventId`) REFERENCES `RegisteredEvent`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`friendId`) REFERENCES `Friend`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "registeredEventId",
+            "columnName": "registeredEventId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "friendId",
+            "columnName": "friendId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "RegisteredEvent",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "registeredEventId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "Friend",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "friendId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c317789959d1d858d0b5e921df9fa9a1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '553d79e6def45acd8b7a551243b4cf48')"
     ]
   }
 }

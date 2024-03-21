@@ -2,7 +2,6 @@ package br.com.rafaelleal.minhasferias.app.test
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -15,7 +14,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import br.com.rafaelleal.minhasferias.app.MainActivity
 import br.com.rafaelleal.minhasferias.app.mocks.MockDb
-import br.com.rafaelleal.minhasferias.presentation_registered_events.R
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.After
@@ -25,7 +23,6 @@ import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @HiltAndroidTest
 class MainActivityTest {
@@ -38,18 +35,133 @@ class MainActivityTest {
     @Before
     fun setUp() {
         hiltAndroidRule.inject()
+        MockDb.initializeDatabase()
     }
 
     @After
     fun tearDown() {
-        MockDb.clearAll()
+        MockDb.closeDatabase()
     }
 
     val timeOutToShowScreenView = 5000L
 
+
+    fun waitInitialFabLoad() {
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag("fab_add_new_event")
+                .fetchSemanticsNodes().size == 1
+        }
+    }
+
+    fun clickOnNodeWithText(text: String) {
+        composeTestRule
+            .onNodeWithText(text)
+            .performClick()
+    }
+
+    fun clickOnNodeWithTag(tag: String) {
+        composeTestRule
+            .onNodeWithTag(tag)
+            .performClick()
+    }
+
+    fun waitNodeWithTagLoad(tag: String) {
+        composeTestRule.waitUntil(timeoutMillis = timeOutToShowScreenView) {
+            composeTestRule.onAllNodesWithTag(tag)
+                .fetchSemanticsNodes().size == 1
+        }
+    }
+
+    fun nodeWithTextExists(text: String) {
+        composeTestRule.onNodeWithText(text).assertExists()
+    }
+
+    fun nodeWithTextDoesNotExist(text: String) {
+        composeTestRule.onNodeWithText(text).assertDoesNotExist()
+    }
+
+    fun writeOnNodeWithTag(tag: String, input: String) {
+        composeTestRule.onNodeWithTag(tag).performTextInput(input)
+    }
+
+    fun clickOnNodeWithContentDescription(description: String) {
+        composeTestRule.onNodeWithContentDescription(description).performClick()
+    }
+
+    fun waitAllNodeWithTagEqualsTo(tag: String, quantity: Int) {
+        composeTestRule.waitUntil(
+            timeoutMillis = timeOutToShowScreenView
+        ) {
+            composeTestRule.onAllNodesWithTag(tag)
+                .fetchSemanticsNodes().size == quantity
+        }
+    }
+
+    @Test
+    fun shouldAddFriendsToEvent() {
+        // Build database data:
+        addTwoRegisteredEventsToDB()
+        addTwoFriendsToDB()
+
+        waitInitialFabLoad()
+
+        clickOnNodeWithText("name 1")
+
+        waitNodeWithTagLoad("EditRegisteredEventHeader")
+
+        clickOnNodeWithTag("AddFriendsButton")
+
+        waitNodeWithTagLoad("EventCard")
+
+        nodeWithTextExists("John Doe")
+        nodeWithTextExists("Jane Doe")
+
+        waitAllNodeWithTagEqualsTo("EmptyCheckIcon", 2)
+        waitAllNodeWithTagEqualsTo("CheckIcon", 0)
+
+        clickOnNodeWithTag("FriendFromEvent-1")
+
+        waitAllNodeWithTagEqualsTo("CheckIcon", 1)
+        waitAllNodeWithTagEqualsTo("EmptyCheckIcon", 1)
+
+    }
+
+    @Test
+    fun should_FilterFriendsInAddFriendsScreen() {
+        // Build database data:
+        addTwoRegisteredEventsToDB()
+        addTwoFriendsToDB()
+        addEventFriendToDb()
+
+        waitInitialFabLoad()
+
+        clickOnNodeWithText("name 1")
+
+        waitNodeWithTagLoad("EditRegisteredEventHeader")
+
+        clickOnNodeWithTag("AddFriendsButton")
+
+        waitNodeWithTagLoad("EventCard")
+
+        nodeWithTextExists("John Doe")
+        nodeWithTextExists("Jane Doe")
+
+        clickOnNodeWithTag("SearchTextField")
+        writeOnNodeWithTag("SearchTextFieldInput", "John")
+
+        clickOnNodeWithContentDescription("Search Icon")
+
+        nodeWithTextExists("John Doe")
+        nodeWithTextDoesNotExist("Jane Doe")
+
+    }
+
+
     // RegisteredEvents Screen tests
     @Test
-    fun shouldFillForm_whenWritingOnAddEventScreen_andSave() {
+    fun should_FillForm_whenWritingOnAddEventScreen_andSave() {
 
         // Variáveis auxiliares
         val monthInt = LocalDate.now().monthValue
@@ -432,6 +544,10 @@ class MainActivityTest {
 
     fun addTwoFriendsToDB() {
         MockDb.addTwoFriendsToDB()
+    }
+
+    fun addEventFriendToDb() {
+        MockDb.addEventFriendToDb()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

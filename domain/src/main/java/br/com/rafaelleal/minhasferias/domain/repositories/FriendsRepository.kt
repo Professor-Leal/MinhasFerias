@@ -9,4 +9,5 @@ interface FriendsRepository {
     fun getFriend(id: Long): Flow<Friend>
     fun updateFriend(registeredEvent: Friend): Flow<Boolean>
     fun deleteFriend(id: Long): Flow<Boolean>
+    fun searchFriendsByName(searchInput: String):  Flow<List<Friend>>
 }

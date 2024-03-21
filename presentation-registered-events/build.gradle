@@ -3,7 +3,9 @@ plugins {
     id 'kotlin-android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+    id 'jacoco'
 }
+
 
 android {
     namespace 'br.com.rafaelleal.minhasferias.presentation_registered_events'

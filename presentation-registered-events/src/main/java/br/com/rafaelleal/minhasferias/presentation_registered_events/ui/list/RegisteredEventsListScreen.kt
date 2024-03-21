@@ -1,4 +1,4 @@
-package br.com.rafaelleal.minhasferias.presentation_registered_events.list
+package br.com.rafaelleal.minhasferias.presentation_registered_events.ui.list
 
 import android.annotation.SuppressLint
 import android.app.Activity

@@ -1,0 +1,110 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
+    id 'jacoco'
+}
+
+
+android {
+    namespace 'br.com.rafaelleal.minhasferias.presentation_events_friends'
+    compileSdk defaultCompileSdkVersion
+
+    defaultConfig {
+        minSdk defaultMinSdkVersion
+        targetSdk defaultTargetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility javaCompileVersion
+        targetCompatibility javaCompileVersion
+    }
+    kotlinOptions {
+        jvmTarget = jvmTargetNumber
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion kotlinCompilerExtensionVersionNumber
+    }
+}
+
+dependencies {
+    implementation(project(path: ":domain"))
+    implementation(project(path: ":presentation-common"))
+
+
+    implementation androidx.core
+    implementation androidx.appCompat
+    implementation material.material
+    implementation androidx.composeUi
+    implementation androidx.composeMaterial
+    implementation androidx.composeUiToolingPreview
+    implementation androidx.lifecycleRuntimeKtx
+    implementation androidx.lifecycleRuntimeCompose
+    implementation androidx.composeActivity
+    implementation androidx.navigationCompose
+    implementation androidx.viewModelKtx
+    implementation androidx.viewModelCompose
+
+    implementation coroutines.coroutinesAndroid
+
+    implementation di.hiltAndroid
+    kapt di.hiltCompiler
+    implementation androidx.hiltNavigationCompose
+
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+
+    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
+    implementation platform('androidx.compose:compose-bom:2022.10.00')
+
+    testImplementation test.junit
+    testImplementation test.coroutines
+    testImplementation test.mockito
+
+    testImplementation test.junit
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+    // Compose tests:
+    androidTestImplementation androidTest.composeUiTestJunit
+    debugImplementation androidTest.composeManifest
+
+    testImplementation di.hiltAndrodiTesting
+    kaptTest di.hiltAndroidCompiler
+    androidTestImplementation di.hiltAndrodiTesting
+    kaptAndroidTest di.hiltAndroidCompiler
+
+    testImplementation test.junit
+    androidTestImplementation androidTest.navigationTesting
+
+    androidTestImplementation androidTest.junit
+    androidTestImplementation androidTest.espressoCore
+    androidTestImplementation androidTest.idlingResource
+    androidTestImplementation androidTest.core
+    androidTestImplementation androidTest.rules
+    androidTestImplementation androidTest.runner
+    androidTestImplementation androidTest.hilt
+    kaptAndroidTest androidTest.hiltCompiler
+    androidTestImplementation androidTest.composeUiTestJunit
+    debugImplementation androidTest.composeManifest
+    androidTestUtil androidTest.orchestrator
+}

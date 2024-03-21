@@ -8,11 +8,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.RegisteredEventsNavRoutes
+import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToAddFriendsToEvent
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToAddNewEvent
 import br.com.rafaelleal.minhasferias.presentation_common.sealed.navigateToHome
-import br.com.rafaelleal.minhasferias.presentation_registered_events.list.RegisteredEventsListScreen
-import br.com.rafaelleal.minhasferias.presentation_registered_events.single.AddRegisteredEventScreen
-import br.com.rafaelleal.minhasferias.presentation_registered_events.single.EditRegisteredEventScreen
+import br.com.rafaelleal.minhasferias.presentation_events_friends.ui.AddFriendsToEventScreen
+import br.com.rafaelleal.minhasferias.presentation_registered_events.ui.list.RegisteredEventsListScreen
+import br.com.rafaelleal.minhasferias.presentation_registered_events.ui.single.AddRegisteredEventScreen
+import br.com.rafaelleal.minhasferias.presentation_registered_events.ui.single.EditRegisteredEventScreen
 
 
 const val GRAPH_ROUTE_EVENTS = "graph_events"
@@ -42,10 +44,24 @@ fun NavGraphBuilder.registeredEventsNavGraph(
             route = RegisteredEventsNavRoutes.Event.route,
             arguments = RegisteredEventsNavRoutes.Event.arguments
         ) {
+            val eventId = RegisteredEventsNavRoutes.Event.fromEntry(it)
             EditRegisteredEventScreen(
-                RegisteredEventsNavRoutes.Event.fromEntry(it),
+                eventId,
+                hiltViewModel(),
+                navigateToAddFriendsToEvent = { navController.navigateToAddFriendsToEvent(eventId) },
+                backToMain = { navController.navigateToHome() }
+            )
+        }
+        composable(
+            route = RegisteredEventsNavRoutes.AddFriends.route,
+            arguments = RegisteredEventsNavRoutes.AddFriends.arguments
+        ){
+            val eventId = RegisteredEventsNavRoutes.AddFriends.fromEntry(it)
+            AddFriendsToEventScreen(
+                eventId,
+                navController,
                 hiltViewModel()
-            ) { navController.navigateToHome() }
+            )
         }
     }
 }
