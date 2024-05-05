@@ -99,6 +99,8 @@ class MainActivityTest {
         }
     }
 
+
+    // EventFriends SAcreen tests
     @Test
     fun shouldAddFriendsToEvent() {
         // Build database data:
